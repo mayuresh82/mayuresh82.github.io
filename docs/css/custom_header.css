@@ -1,0 +1,30 @@
+@media only screen and (min-width: 768px) {
+    .navbar-custom .navbar-brand {
+        color: #000080;
+    }
+}
+
+@media only screen and (min-width:768px) {
+	.navbar-custom .nav li a {
+		color: #000080;
+	}
+}
+.navbar-default .navbar-custom .navbar-brand .navbar-nav>li>a {
+    color: #000080;
+}
+
+.tags .tag {
+    color: #000080;
+}
+
+.heading {
+    color: #000080;
+}
+
+.subheading {
+    color: #000080;
+}
+
+.meta {
+    color: #000080;
+}

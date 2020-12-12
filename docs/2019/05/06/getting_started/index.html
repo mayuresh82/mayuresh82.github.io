@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="NRE-Bytes">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://mayuresh82.github.io/img/banner-main.jpg">
+    <meta property="twitter:image" content="https://mayuresh82.github.io/img/banner-main.jpg" />
+    
+
+    
+    <meta name="title" content="Getting started with Network Automation" />
+    <meta property="og:title" content="Getting started with Network Automation" />
+    <meta property="twitter:title" content="Getting started with Network Automation" />
+    
+
+    
+    <meta name="description" content="Network Automation Blog with a focus on scale and reliability">
+    <meta property="og:description" content="Network Automation Blog with a focus on scale and reliability" />
+    <meta property="twitter:description" content="Network Automation Blog with a focus on scale and reliability" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="network, automation, build, anycast, scale, reliability, NRE, framework">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Getting started with Network Automation-mayuresh82 | The Network Builder</title>
+
+    <link rel="canonical" href="/2019/05/06/getting_started">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    <link rel="stylesheet" href="https://mayuresh82.github.io/css/custom_header.css">
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">NRE-Bytes</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/general">general</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/infra">infra</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/intro.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/network-automation" title="network automation">
+                            network automation
+                        </a>
+                        
+                        <a class="tag" href="/tags/howto" title="howto">
+                            howto
+                        </a>
+                        
+                        <a class="tag" href="/tags/netdevops" title="netdevops">
+                            netdevops
+                        </a>
+                        
+                    </div>
+                    <h1 class="heading">Getting started with Network Automation</h1>
+                    <h2 class="subheading">Guidelines for a network engineer</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                            mayuresh82
+                         
+                        on 
+                        Monday, May 6, 2019
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#getting-started-with-network-automation">Getting Started with Network Automation</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <h2 id="getting-started-with-network-automation">Getting Started with Network Automation</h2>
+<p>Network Automation is the “art” of automating repetitive tasks related to network provisioning, deployment, monitoring and alerting. The reason its an art is because you can conceptualize and develop very creative methods to achieve your network automation goals. To get started, it is important to first identify a problem that needs to be solved, ideally a simple one. This helps establish clear goals and helps navigate the myriad web of libraries and open source tools available at your disposal. A good example would be network device configuration management or device provisioning. Setting a goal is usually as important as solving the problem itself. The below points are meant to act as guidelines for the network engineer looking to introduce automation into the day to day operations of a typical enterprise network.</p>
+<p><strong>Learn Python:</strong> You may have heard philosophies such as &ldquo;you do not need to know coding to begin automating your network&hellip;&rdquo; before. And while this may be partially true in the short term, the long term success of your automation journey depends on learning and <em>being good at</em> at least one programming language - Python being the language of choice due to its simple syntax and user friendliness. You do not need to be an expert but once you are able to write clean and readable code, you will realize that it opens up many more avenues for innovation and creativity. It is in every network engineer&rsquo;s best interest to understand how to interact with a network device at the protocol level rather than to write a few lines of YAML and let &ldquo;magic&rdquo; happen behind the scenes. Remember, you would not be a network engineer today if you had not learnt the OSI model on day 1.
+<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><strong>Keep it simple:</strong> This one is a no brainer. If this is your initial foray into the world of network automation, you want to make sure the barrier to entry is kept super low. Automation frameworks can get very complex very fast (often times to their own detriment) and can easily scare network engineers away. Use just the tools you need to get the current problem solved and consider supportability and longer term maintainability. Consider the problem of automating network device configuration management. Once you start exploring whats out there, you will quickly get confused enough to want to rip your hair out. Puppet, Chef, Ansible, Salt, the options don’t seem to end. If you are willing to ignore any fancy feature sets, network configuration management really only requires a good templating engine, a scalable and procedural way to push configs out to devices and possibly some archiving/restoring capabilities. Need to automate network telemetry/ metric collection ? Keep the fancy stuff (GNMI, Streaming Telemetry) aside and start with simple XML/Netconf. Knowing exactly what you need puts you in a good position to make a sensible choice.
+<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><strong>Start with a Source of Truth:</strong> You have probably heard this before and it is absolutely true. A source of truth allows you to define the desired state of your network, including network inventories, ip addresses, topologies, circuits and the like. A source of truth is usually the building block around which many other automation workflows and tooling will revolve. You will find that over time, almost every single piece of automation tooling will either plug into or rely on the source of truth. Reiterating point 1 above, nothing fancy needed here: a simple relational database will suffice. Start with the current network steady state and use the source of truth to express intent for future demands.
+<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><strong>To Open Source or not to Open Source:</strong> This one is can get tricky if you are just getting started with building network automation frameworks. The general instinct for folks who are just getting started is to say “since its out there, has 10k starts on github and is used by some leading tech companies, it has to be good ! So lets jump on it !” . Needless to say, this approach could backfire in the long run. Open source software is not burden free, it comes with its own set of challenges and problems including but not limited to working with code written by others (thereby losing control over bug-fixes and feature sets) and learning often cryptic and inflexible DSLs (Domain Specific Languages). Take the source of truth example from above. There are some really good open source solutions available for this. Unfortunately, they also excel at tying you down to a schema and API that worked best for the company that open sourced it, plus or minus some changes from the community. Care needs to be taken to avoid open source &ldquo;tie-in&rdquo;. Fundamental tasks are often best solved by using simple, flexible in house solutions, especially when they add strategic value to your team. This allows you to get a real taste of what network automation is all about without having to navigate the complex web of open-source software. On the other hand, if you want to create a dashboard with network metrics, trying to write a time series database or a dash-boarding solution in-house without an army of engineers or expertise is simply not practical. Feel free to chose the best reviewed open source solution for this one.
+<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><strong>Get inspired by the DevOps/SRE folks:</strong> Perhaps the best resource you may already have at your disposal when you are start looking to automate your network is your in-house SRE/DevOps team (most web scale companies have one.) This is the team that is responsible for deploying, provisioning, monitoring and alerting the server fleet in your organization. Sound familiar ? Replace server with network device and you can see the similarities in the goals. For many of the common objectives, you may be able to leverage infrastructure that the server team has already laid out to build your network tooling on top of. Common examples of this are database infrastructures (time-series/sql), software orchestration and containerization solutions such as Docker, Kubernetes and alert management solutions.
+<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><strong>Optimize for scale:</strong> This is one piece of advice you will hear from engineers battle hardened from deploying automation solutions over a number of years, especially in companies that have experienced growth. Regardless of whether you manage a 10 device flat layer 2 network or a 10,000 device clos datacenter fabric, design your frameworks with scalability in mind. The last thing you want is your Python based XML collection engine to choke on more metrics than it can handle causing you to lose data-points and thus create gaps in your network monitoring. Going back to point 3 above, feel free to take inspiration from server management principles to scale and grow your network automation frameworks.
+<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<p><strong>Trust your traditional skills</strong>: Last but not least, remember that the person who is in the best possible position to automate a data network is the Network Engineer himself/herself. Not a Software Engineer, not a DevOps type guy with a networking background. You know the ins and outs of your network, you know the pain points that create huge manual burden and you know what it takes to find and fix problems. Trying to build a workflow to upgrade the code for thousands of devices ? You’ve been doing that manually for years already ! Trying to automate the task of taking MPLS nodes out of service ? Knowing how to steer MPLS traffic away from an LSR is half the job done. The other half is usually a matter of logistics and tracking (well maybe more than that, but you get the picture.)</p>
+<p>Once you start exploring the world of network automation, you will most likely never look back. It can be initially hard to transition away from using your strengths (traditional networking) to mostly uncharted territory where success is not clearly defined. However, automation is a gift that keeps on giving. The more of it you adopt, the more rewarding the experience. So get your coding hats on ! (and dont forget unit tests).</p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2020/11/28/automatic_service_discovery_anycast" data-toggle="tooltip" data-placement="top" title="BGP based Anycast as a Service">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="NRE-Bytes" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:nre-bytes@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+
+                    
+
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/mayuresh82">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/mayuresh-gaitonde-3232001/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://stackoverflow.com/users/11501174/mayuresh-gaitonde">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-stack-overflow fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+            
+                    
+                    
+                    
+            
+            
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; NRE-Bytes 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+</body>
+</html>

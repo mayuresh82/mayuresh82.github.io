@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="NRE-Bytes">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://mayuresh82.github.io/img/banner-main.jpg">
+    <meta property="twitter:image" content="https://mayuresh82.github.io/img/banner-main.jpg" />
+    
+
+    
+    <meta name="title" content="BGP based Anycast as a Service" />
+    <meta property="og:title" content="BGP based Anycast as a Service" />
+    <meta property="twitter:title" content="BGP based Anycast as a Service" />
+    
+
+    
+    <meta name="description" content="Network Automation Blog with a focus on scale and reliability">
+    <meta property="og:description" content="Network Automation Blog with a focus on scale and reliability" />
+    <meta property="twitter:description" content="Network Automation Blog with a focus on scale and reliability" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="network, automation, build, anycast, scale, reliability, NRE, framework">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>BGP based Anycast as a Service-mayuresh82 | The Network Builder</title>
+
+    <link rel="canonical" href="/2020/11/28/automatic_service_discovery_anycast">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">NRE-Bytes</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/general">general</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/infra">infra</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/gocast_bg.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/anycast" title="anycast">
+                            anycast
+                        </a>
+                        
+                        <a class="tag" href="/tags/load-balancing" title="load-balancing">
+                            load-balancing
+                        </a>
+                        
+                        <a class="tag" href="/tags/go" title="Go">
+                            Go
+                        </a>
+                        
+                        <a class="tag" href="/tags/gocast" title="gocast">
+                            gocast
+                        </a>
+                        
+                    </div>
+                    <h1 class="heading">BGP based Anycast as a Service</h1>
+                    <h2 class="subheading">A primer on GoCast</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                            mayuresh82
+                         
+                        on 
+                        Saturday, November 28, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#orchestration-and-service-discovery">Orchestration and Service Discovery</a></li>
+        <li><a href="#bgp-based-anycast">BGP Based Anycast</a></li>
+        <li><a href="#enter-gocast">Enter GoCast</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <h2 id="orchestration-and-service-discovery">Orchestration and Service Discovery</h2>
+<p>The term orchestration, in part, refers to the automated deployment of services or applications inside of your infrastructure. The orchestration solution takes care of things like resource allocation, entitlements and the placement of an application or a service on a machine or a group of machines. If the machine your service is deployed on fails for some reason, the orchestration system automatically detects the failure and re-deploys the service according to the service policy. Examples of widely used orchestration solutions include Kubernetes and Hashicorp Nomad. Orchestration is imperative to the rapid scaling and speedy deployment of services in today&rsquo;s micro-service based architectures.</p>
+<p>Service Orchestration usually goes hand in hand with Service Discovery. While the former is responsible for deployment of services across the infrastructure ( which can be thought of as the &ldquo;internal cloud&rdquo; ), the latter provides a way to discover service parameters ( such as IP addresses, host names and other attributes that services can &ldquo;register&rdquo; with the discovery tool ) for clients looking to use those services. As a result, clients do not need hard-coded server parameters since those are likely to change based on allocation policies. While Kubernetes has Service Discovery built-in, Hashicorp has a separate solution called Consul that gets that job done. This blog post focussing mainly on using the combination of Nomad and Consul for service orchestration and discovery. Excellent summaries on how these systems work are available at <a href="https://www.nomadproject.io/intro">Nomad Guide</a> and <a href="https://www.consul.io/docs/intro">Consul Intro</a>.</p>
+<p>Several network services could be deployed using orchestration solutions. Examples include but are not limited to DNS servers, DHCP servers, FTP servers, etc. These ( and other services ) could be deployed either as native applications on hosts or as containerized workloads using Docker or some such mechanism. In order to ensure high availability of these services, it is common practice to deploy multiple instances of each service across several machines that may be physically or geographically diverse. Load sharing or load balancing could also be achieved by deploying several instances across multiple hosts inside of a given failure domain as shown below.</p>
+<p>
+  <figure>
+    <img src="/img/anycast.png" alt="Distributed service deployment">
+    <center><figcaption>Distributed Service Deployment Example</figcaption></center>
+  </figure>
+
+</p>
+<p>In the above example, multiple instances of a service have been deployed across multiple racks inside of different (geographically diverse) data-centers, all connected by a backbone network. Clients load balance to the closest server. To achieve actual load balancing between multiple services, there are a few options:</p>
+<ul>
+<li>
+<p>Use load balancing mechanisms provided by or built into the Service Discovery solution. For example, Consul utilizes an <a href="https://www.hashicorp.com/blog/load-balancing-strategies-for-consul">internal DNS based load balancing scheme</a> that uses its own health checking mechanism for detecting node and service failures ( these are usually simple tcp or http based checks. ) There are also third party open source tools ( as detailed in the above link ) that integrate with Consul and provide similar or better functionality, albeit at L7.
+The main drawback of these techniques is that the load balancing solution is tightly coupled with the deployment strategy of the orchestration system itself. In the case of Consul for example, you may be able to only balance across a single Consul cluster which is typically contained within a single data-center ( in the above example. clients c3 and c4 cannot access services in DC1 and DC2 in that case). The second drawback ( and possibly the bigger one for Network Engineers ) is that this method relies on DNS resolution, which often is unsupported on network devices for outbound communication ( for e.g with an SDN controller ).</p>
+</li>
+<li>
+<p>The second, and the more flexible and scalable approach is to use <a href="https://en.wikipedia.org/wiki/Anycast">anycast</a>. This is also a very common approach where multiple hosts/servers announce a Virtual IP (or VIP) (typically using BGP) to the top-of-rack switch. When announced at multiple locations, network devices then use Equal Cost Multi-Path (ECMP) to load balance traffic within a single data-center. This method works at L4 and is seamless across data-centers as well, since traffic will simply be routed to the next closest origin if the VIP is lost in one data-center ( the overhead here is added latency, but the condition is usually temporary).</p>
+</li>
+</ul>
+<h2 id="bgp-based-anycast">BGP Based Anycast</h2>
+<p>Lets dig deeper into the mechanics of VIP announcements and failure handling in the anycast scenario. In order to announce a VIP via BGP, you would typically use a BGP routing daemon (such as BIRD or ExaBGP) running on the same node as the service itself. A separate script then runs periodic health checks in order to detect service failures. The script sends a route withdraw command to the BGP daemon (via an API) whenever the service crashes or goes down, thereby taking that node out of service. If the node itself goes down, the daemon goes away with it and the route is withdrawn as well. A quick Python or Bash script that does this is quite easy to hack together. But how do you scale this simplistic model to hundreds of nodes, especially in the case where an orchestration system such as Nomad is in use ? We need to account for services landing on any host in the Nomad cluster, as well as existing services getting re-allocated onto different hosts. The naive health-check based wrapper needs to be made more &ldquo;intelligent&rdquo; in that:</p>
+<ul>
+<li>It needs to now automatically discover services that require a VIP announcement and figure out what VIPs to announce</li>
+<li>It needs to support multiple VIPs for multiple applications, each with its own set of health-checks</li>
+<li>It needs to be deployed across the entire fleet of clients registered with the orchestration system ( i.e Nomad )</li>
+<li>It needs to support containerized deployments</li>
+</ul>
+<p>As mentioned before, Consul is the service discovery tool used by Nomad. Nomad has strong integration with Consul and services that Nomad deploys are automatically registered with Consul. Note that even if Nomad is not in use, Consul can still be used to register a deployed application using its <a href="https://www.consul.io/api-docs">HTTP API</a>. However, it does not usually make much sense to use service discovery by itself. An application registered with Consul could &ldquo;express intent&rdquo; about wanting to be reachable via a VIP. The VIP is usually pre-determined and pre-allocated from some IP Address Management (IPAM) database. A health-check script could then plug into Consul and discover the services that desire VIP announcement, using pre-defined health checks or Consul&rsquo;s own health checks to announce or withdraw the VIPs to a top-of-rack switch.</p>
+<blockquote>
+<p>In other words, the tool that provides health-check based VIP announcement needs to be deployed as a service. And therein lies the basic premise of GoCast.</p>
+</blockquote>
+<h2 id="enter-gocast">Enter GoCast</h2>
+<p><a href="https://github.com/mayuresh82/gocast">GoCast</a> is a fast and lightweight tool written in Go that acts both as a BGP daemon as well as a health check utility to control BGP announcements. It uses the excellent <a href="https://github.com/osrg/gobgp">GoBGP</a> library to perform BGP peering while offering Consul integration in order to discover applications that require VIP announcement. When used this way, it uses Consul&rsquo;s own health checks to determine service health. Aside from this, It also supports service definitions and health-checks defined via a config file or via an HTTP API. This is useful in the case the application is UDP based ( since at the time of this writing, Consul does not support UDP health checks ) or when Consul is not used. It supports both native as well as containerized deployments via Docker.</p>
+<h3 id="deployment-as-a-service">Deployment as a service</h3>
+<p>GoCast is available via a docker image but can be compiled and installed as a binary as well. Nomad itself can be used to deploy GoCast as a <code>system</code> job - one which gets deployed to every Nomad client node. This ensures that GoCast is able to service any application that lands on any Nomad client in the region. Once this is done, it can listen to the local Consul agent on each node for services or accept API calls made locally by applications running on the same host. (Although I use Nomad and Consul as the tools going forward, the same principle applies to any other.)</p>
+<p>GoCast queries Consul periodically for services running on the same host that match a specific tag <code>enable_gocast</code>. An application that requires VIP announcement registers itself to Consul with tags that look like the following:</p>
+<pre><code>enable_gocast=true
+gocast_vip=10.1.1.1/32
+gocast_monitor=consul
+</code></pre><p>Note that <code>gocast_monitor</code> could also just be a tcp or a udp health check in the format <code>port:protocol:&lt;port_num&gt;</code>. Aside from this, an exec monitor of the form <code>exec:command</code> that runs arbitrary commands and passes on successful exit (status code 0) is also supported.</p>
+<p>To illustrate the practical use of GoCast, lets assume a simple setup of a linux host connected to a Juniper QFX5100 rack switch. Assume we have an FTP server running on the host that we want reachable via a VIP 10.255.255.1. The rack switch is configured to listen on a range of BGP originators to eBGP peer with the server:</p>
+<pre><code>protocols {
+   bgp {
+       group SERVER {
+           type external;
+           import ALLOW-VIP;
+           export NOTHING;
+           peer-as 65000;
+           local-as 64999;
+           allow 172.16.1.0/24;
+       }
+   }
+}
+</code></pre><p>The GoCast config on the server looks like this:</p>
+<pre><code>agent:
+  # http server listen addr
+  listen_addr: :8080
+  # Interval for health check
+  monitor_interval: 10s
+  # Time to flush out inactive apps
+  cleanup_timer: 15m
+  # Consul api addr for dynamic discovery
+  consul_addr: http://localhost:8500
+  # interval to query consul for app discovery
+  consul_query_interval: 2m
+
+bgp:
+  local_as: 65000
+  remote_as: 64999
+  communities:
+    - 100:100
+  origin: igp
+</code></pre><p>Note that we dont define any apps in the config as those will be dynamically registered. We also don&rsquo;t need to define a peer ip address since it is auto-discovered ! Now we can run the gocast binary. GoCast needs to be run either as root or needs to be provided NET_ADMIN capabilities, since it manipulates the host network stack.</p>
+<pre><code>test1:~$ sudo ./gocast -logtostderr -v=2 -config gocast.yaml
+I1201 00:13:08.631733    6860 server.go:26] Starting http server on :8080
+</code></pre><p>To test BGP connectivity, we can register an app locally using the http API. We use <code>10.255.255.1/32</code> as the VIP and since we want to monitor the local FTP server, we request a port monitor for TCP port 21. In another window, type:</p>
+<pre><code>test1:~$ curl http://localhost:8080/register?name=test-app&amp;vip=10.255.255.1/32&amp;monitor=port:tcp:21
+</code></pre><p>The GoCast logs successfully show the app getting registered and BGP being established:</p>
+<pre><code>I1128 23:25:11.733916   10602 server.go:26] Starting http server on :8080
+I1128 23:27:31.696132   10602 monitor.go:165] Registered a new app: &amp;{test-app 10.255.255.1/32 [0xc0000af880] [] http}
+I1128 23:27:31.698070   10602 monitor.go:221] All Monitors for app: test-app succeeded
+INFO[0140] Add a peer configuration for:172.16.1.50      Topic=Peer
+I1128 23:27:41.727385   10602 monitor.go:221] All Monitors for app: test-app succeeded
+INFO[0154] skipped asn negotiation: peer-as: 64999, peer-type: external  Key=172.16.1.50 State=BGP_FSM_OPENSENT Topic=Peer
+INFO[0154] Peer Up                                       Key=172.16.1.50 State=BGP_FSM_OPENCONFIRM Topic=Peer
+</code></pre><p>Upon checking the TOR switch, you can see the route is now being announced and thus the service is now reachable.</p>
+<pre><code>vagrant@vqfx-re&gt; show route 10.255.255.1
+
+inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)
++ = Active Route, - = Last Active, * = Both
+
+10.255.255.1/32    *[BGP/170] 00:01:32, localpref 100
+                      AS path: 65000 I, validation-state: unverified
+                    &gt;  to 172.16.1.10 via em3.0
+
+vagrant@vqfx-re&gt; ftp 10.255.255.1
+Connected to 10.255.255.1.
+220 (vsFTPd 3.0.3)
+Name (10.255.255.1:vagrant):
+</code></pre><p>So everything works great, but in the real world where orchestration is employed, the FTP service could land on any host and as a result we need to utilize service discovery. For testing, lets fire up a consul agent on the host and register our FTP service to it using the requisite health checks and tags:</p>
+<pre><code>test1:~$  consul agent -dev
+==&gt; Starting Consul agent...
+           Version: '1.5.2-dev'
+           Node ID: '9ddbd02b-d61c-02b6-f324-d3b115d6716c'
+         Node name: 'mayur-test1'
+        Datacenter: 'dc1' (Segment: '&lt;all&gt;')
+            Server: true (Bootstrap: false)
+       Client Addr: [127.0.0.1] (HTTP: 8500, HTTPS: -1, gRPC: 8502, DNS: 8600)
+      Cluster Addr: 127.0.0.1 (LAN: 8301, WAN: 8302)
+           Encrypt: Gossip: false, TLS-Outgoing: false, TLS-Incoming: false, Auto-Encrypt-TLS: false
+
+test1:~$ cat consul.json
+{
+  &quot;ID&quot;: &quot;ftp-gocast&quot;,
+  &quot;Name&quot;: &quot;ftpd&quot;,
+  &quot;Tags&quot;: [&quot;enable_gocast&quot;, &quot;gocast_vip=10.255.255.1/32&quot;, &quot;gocast_monitor=consul&quot;],
+  &quot;Address&quot;: &quot;127.0.0.1&quot;,
+  &quot;Port&quot;: 21,
+  &quot;EnableTagOverride&quot;: false,
+  &quot;Check&quot;: {
+    &quot;DeregisterCriticalServiceAfter&quot;: &quot;90m&quot;,
+    &quot;TCP&quot;: &quot;127.0.0.1:21&quot;,
+    &quot;Interval&quot;: &quot;10s&quot;,
+    &quot;Timeout&quot;: &quot;5s&quot;
+  },
+  &quot;Weights&quot;: {
+    &quot;Passing&quot;: 10,
+    &quot;Warning&quot;: 1
+  }
+}
+
+test1:~$ curl -X PUT --data @consul.json &quot;http://127.0.0.1:8500/v1/agent/service/register?replace-existing-checks=true&quot;
+
+test1:~$ curl &quot;http://127.0.0.1:8500/v1/agent/service/ftp-gocast&quot;
+{
+    &quot;ID&quot;: &quot;ftp-gocast&quot;,
+    &quot;Service&quot;: &quot;ftpd&quot;,
+    &quot;Tags&quot;: [
+        &quot;enable_gocast&quot;,
+        &quot;gocast_vip=10.255.255.1/32&quot;,
+        &quot;gocast_monitor=consul&quot;
+    ],
+    &quot;Meta&quot;: null,
+    &quot;Port&quot;: 21,
+    &quot;Address&quot;: &quot;127.0.0.1&quot;,
+    &quot;Weights&quot;: {
+        &quot;Passing&quot;: 10,
+        &quot;Warning&quot;: 1
+    },
+    &quot;EnableTagOverride&quot;: false,
+    &quot;ContentHash&quot;: &quot;15dffd1438f1271e&quot;
+}
+</code></pre><p>Note that in practice, service registrations are handled by Nomad. We can now fire up gocast and watch it auto-discover the service, determine the health check and announce the VIP to the switch, all without any manual intervention:</p>
+<pre><code>test1:~$ export CONSUL_NODE=test1
+test1:~$ sudo -E ./gocast -logtostderr -v=2 -config gocast.yaml
+I1210 23:53:21.915448   12935 server.go:26] Starting http server on :8080
+I1210 23:53:21.928991   12935 app.go:99] Will use consul healthcheck monitor
+I1210 23:53:21.929595   12935 monitor.go:165] Registered a new app: &amp;{ftpd 10.255.255.1/32 [0xc000093880] [] consul}
+I1210 23:53:21.932675   12935 monitor.go:221] All Monitors for app: ftpd succeeded
+INFO[0000] Add a peer configuration for:172.16.1.50      Topic=Peer
+I1210 23:53:31.946323   12935 monitor.go:221] All Monitors for app: ftpd succeeded
+INFO[0014] skipped asn negotiation: peer-as: 64999, peer-type: external  Key=172.16.1.50 State=BGP_FSM_OPENSENT Topic=Peer
+INFO[0014] Peer Up                                       Key=172.16.1.50 State=BGP_FSM_OPENCONFIRM Topic=Peer
+I1210 23:53:41.946353   12935 monitor.go:221] All Monitors for app: ftpd succeeded
+</code></pre><p>And thats it. No more hacking one-off Bash or Python scripts together. Just a single ligtweight binary that is deployable everywhere. GoCast also natively supports Docker containers and can itself be ran as a containerized daemon. Hopefully this post serves to illustrate the idea of <em>BGP Anycast as a Service</em> and how GoCast can help achieve this in a simple and scalable fashion.</p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2019/05/06/getting_started" data-toggle="tooltip" data-placement="top" title="Getting started with Network Automation">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="NRE-Bytes" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:nre-bytes@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+
+                    
+
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/mayuresh82">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/mayuresh-gaitonde-3232001/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://stackoverflow.com/users/11501174/mayuresh-gaitonde">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-stack-overflow fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+            
+                    
+                    
+                    
+            
+            
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; NRE-Bytes 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+</body>
+</html>

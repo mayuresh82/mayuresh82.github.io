@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>network automation on NRE-Bytes</title>
+    <link>https://mayuresh82.github.io/tags/network-automation/</link>
+    <description>Recent content in network automation on NRE-Bytes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 06 May 2019 15:05:46 -0800</lastBuildDate>
+    
+	<atom:link href="https://mayuresh82.github.io/tags/network-automation/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Getting started with Network Automation</title>
+      <link>https://mayuresh82.github.io/2019/05/06/getting_started/</link>
+      <pubDate>Mon, 06 May 2019 15:05:46 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/2019/05/06/getting_started/</guid>
+      <description>Getting Started with Network Automation Network Automation is the “art” of automating repetitive tasks related to network provisioning, deployment, monitoring and alerting. The reason its an art is because you can conceptualize and develop very creative methods to achieve your network automation goals. To get started, it is important to first identify a problem that needs to be solved, ideally a simple one. This helps establish clear goals and helps navigate the myriad web of libraries and open source tools available at your disposal.</description>
+    </item>
+    
+  </channel>
+</rss>
