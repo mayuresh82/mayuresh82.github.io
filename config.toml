@@ -15,7 +15,7 @@ home = ["HTML", "RSS", "Algolia"]
 
 [params]
   header_image = "img/banner-main.jpg"
-  SEOTitle = "mayuresh82 | The Network Builder"
+  SEOTitle = "mayuresh82 | Network Reliability Engineering"
   description = "Network Automation Blog with a focus on scale and reliability"
   keyword = "network, automation, build, anycast, scale, reliability, NRE, framework"
   slogan = "Morsels of NRE Wisdom"
@@ -32,7 +32,7 @@ home = ["HTML", "RSS", "Algolia"]
   # algolia site search
   algolia_search = true
   algolia_appId = "ZTBW340V7L"
-  algolia_indexName = ""
+  algolia_indexName = "blog_index"
   algolia_apiKey = "9af2b9752dd099b029be8de6e0dabf23"
 
   disqusShortname = "mayuresh82-gitub-io"
