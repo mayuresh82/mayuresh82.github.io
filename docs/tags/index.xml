@@ -2,75 +2,75 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on NRE-Bytes</title>
-    <link>https://mayuresh82.github.io/tags/</link>
+    <link>https://github.com/mayuresh82/mayuresh82.github.io/tags/</link>
     <description>Recent content in Tags on NRE-Bytes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sat, 28 Nov 2020 15:05:46 -0800</lastBuildDate>
     
-	<atom:link href="https://mayuresh82.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://github.com/mayuresh82/mayuresh82.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>anycast</title>
-      <link>https://mayuresh82.github.io/tags/anycast/</link>
+      <link>https://github.com/mayuresh82/mayuresh82.github.io/tags/anycast/</link>
       <pubDate>Sat, 28 Nov 2020 15:05:46 -0800</pubDate>
       
-      <guid>https://mayuresh82.github.io/tags/anycast/</guid>
+      <guid>https://github.com/mayuresh82/mayuresh82.github.io/tags/anycast/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Go</title>
-      <link>https://mayuresh82.github.io/tags/go/</link>
+      <link>https://github.com/mayuresh82/mayuresh82.github.io/tags/go/</link>
       <pubDate>Sat, 28 Nov 2020 15:05:46 -0800</pubDate>
       
-      <guid>https://mayuresh82.github.io/tags/go/</guid>
+      <guid>https://github.com/mayuresh82/mayuresh82.github.io/tags/go/</guid>
       <description></description>
     </item>
     
     <item>
       <title>gocast</title>
-      <link>https://mayuresh82.github.io/tags/gocast/</link>
+      <link>https://github.com/mayuresh82/mayuresh82.github.io/tags/gocast/</link>
       <pubDate>Sat, 28 Nov 2020 15:05:46 -0800</pubDate>
       
-      <guid>https://mayuresh82.github.io/tags/gocast/</guid>
+      <guid>https://github.com/mayuresh82/mayuresh82.github.io/tags/gocast/</guid>
       <description></description>
     </item>
     
     <item>
       <title>load-balancing</title>
-      <link>https://mayuresh82.github.io/tags/load-balancing/</link>
+      <link>https://github.com/mayuresh82/mayuresh82.github.io/tags/load-balancing/</link>
       <pubDate>Sat, 28 Nov 2020 15:05:46 -0800</pubDate>
       
-      <guid>https://mayuresh82.github.io/tags/load-balancing/</guid>
+      <guid>https://github.com/mayuresh82/mayuresh82.github.io/tags/load-balancing/</guid>
       <description></description>
     </item>
     
     <item>
       <title>howto</title>
-      <link>https://mayuresh82.github.io/tags/howto/</link>
+      <link>https://github.com/mayuresh82/mayuresh82.github.io/tags/howto/</link>
       <pubDate>Mon, 06 May 2019 15:05:46 -0800</pubDate>
       
-      <guid>https://mayuresh82.github.io/tags/howto/</guid>
+      <guid>https://github.com/mayuresh82/mayuresh82.github.io/tags/howto/</guid>
       <description></description>
     </item>
     
     <item>
       <title>netdevops</title>
-      <link>https://mayuresh82.github.io/tags/netdevops/</link>
+      <link>https://github.com/mayuresh82/mayuresh82.github.io/tags/netdevops/</link>
       <pubDate>Mon, 06 May 2019 15:05:46 -0800</pubDate>
       
-      <guid>https://mayuresh82.github.io/tags/netdevops/</guid>
+      <guid>https://github.com/mayuresh82/mayuresh82.github.io/tags/netdevops/</guid>
       <description></description>
     </item>
     
     <item>
       <title>network automation</title>
-      <link>https://mayuresh82.github.io/tags/network-automation/</link>
+      <link>https://github.com/mayuresh82/mayuresh82.github.io/tags/network-automation/</link>
       <pubDate>Mon, 06 May 2019 15:05:46 -0800</pubDate>
       
-      <guid>https://mayuresh82.github.io/tags/network-automation/</guid>
+      <guid>https://github.com/mayuresh82/mayuresh82.github.io/tags/network-automation/</guid>
       <description></description>
     </item>
     
