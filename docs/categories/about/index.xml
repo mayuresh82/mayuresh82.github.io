@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>About on NRE-Bytes</title>
+    <link>https://mayuresh82.github.io/categories/about/</link>
+    <description>Recent content in About on NRE-Bytes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 06 May 2019 15:05:46 -0800</lastBuildDate>
+    
+	<atom:link href="https://mayuresh82.github.io/categories/about/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>About Me</title>
+      <link>https://mayuresh82.github.io/top/about/</link>
+      <pubDate>Mon, 06 May 2019 15:05:46 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/top/about/</guid>
+      <description>Welcome to my blog, where I try and share real world tips and techniques covering practical aspects of network automation, monitoring, configuration management and other infrastructure related problems. I am a Network Engineer turned Network Automation guy / Network Reliability Engineer who loves building micro-service based frameworks for the monitoring, provisioning and deployment of large/web scale network environments. I am a fan of Open Source but less so than building things myself to get the job done :) I prefer coding in Golang and Python and recently have developed an active interest in front end development using React-JS.</description>
+    </item>
+    
+  </channel>
+</rss>

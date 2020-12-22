@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="NRE-Bytes">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://mayuresh82.github.io/img/banner-main.jpg">
+    <meta property="twitter:image" content="https://mayuresh82.github.io/img/banner-main.jpg" />
+    
+
+    
+    <meta name="title" content="Building Dynamic Inventories in Nornir" />
+    <meta property="og:title" content="Building Dynamic Inventories in Nornir" />
+    <meta property="twitter:title" content="Building Dynamic Inventories in Nornir" />
+    
+
+    
+    <meta name="description" content="Network Automation Blog with a focus on real world problems">
+    <meta property="og:description" content="Network Automation Blog with a focus on real world problems" />
+    <meta property="twitter:description" content="Network Automation Blog with a focus on real world problems" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="network, automation, build, anycast, scale, reliability, NRE, framework">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Building Dynamic Inventories in Nornir-mayuresh82 | Network Reliability Engineering</title>
+
+    <link rel="canonical" href="/2020/12/25/nornir_inventories">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">NRE-Bytes</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/about">about</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/general">general</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/infra">infra</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/nornir_inv.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/nornir" title="nornir">
+                            nornir
+                        </a>
+                        
+                        <a class="tag" href="/tags/netbox" title="netbox">
+                            netbox
+                        </a>
+                        
+                        <a class="tag" href="/tags/inventory" title="inventory">
+                            inventory
+                        </a>
+                        
+                        <a class="tag" href="/tags/dynamic" title="dynamic">
+                            dynamic
+                        </a>
+                        
+                    </div>
+                    <h1 class="heading">Building Dynamic Inventories in Nornir</h1>
+                    <h2 class="subheading">Extending Nornir&#39;s functionality to build dynamic inventories from Netbox</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                            mayuresh82
+                         
+                        on 
+                        December 21, 2020
+                        
+                        
+                        
+						- 13 minute read
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#building-dynamic-inventories-in-nornir">Building Dynamic Inventories in Nornir</a>
+      <ul>
+        <li><a href="#creating-inventory-groups">Creating Inventory Groups</a></li>
+        <li><a href="#adding-run-time-filtering">Adding run-time filtering</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <h1 id="building-dynamic-inventories-in-nornir">Building Dynamic Inventories in Nornir</h1>
+<p>Organizing your Nornir inventory into multiple groups based on device attributes is a useful feature that allows running tasks against specific groups of hosts. Other frameworks like Ansible ship with a powerful dynamic inventory management system that allows grouping and filtering. While Nornir 3.0 has a community driven <a href="https://github.com/wvandeun/nornir_netbox">Netbox Plugin</a>, it is pretty basic and includes a simple way to pull in hosts from Netbox. In this blog post, we will see how we can extend this Netbox plugin to build a dynamic inventory with powerful grouping and run-time filtering capabilities.</p>
+<p><em>Note that the intent of this exercise is not to replicate Ansible&rsquo;s functionality in Nornir but rather to showcase the benefits of learning and incorporating more Python into your automation stack.</em></p>
+<h2 id="creating-inventory-groups">Creating Inventory Groups</h2>
+<p>In a production environment, you may want to organize your inventory into groups ( based on device attributes such as location, role and others ) so that tasks such as configuration pushes can be performed against specific sets of devices. While the Netbox inventory plugin for Nornir is able to build a Nornir inventory using the Netbox API, it does not provide any grouping functionality, quite possibly due to the fact that the how and why of grouping is usually very specific to individual network environments. However, using a little bit of YAML and Python, we can customize the inventory build in a way that can serve a vast majority of production environments.</p>
+<p>Let start by installing Nornir and the Nornir-Netbox inventory plugin mentioned above along with a few other dependencies:</p>
+<pre><code>pip install nornir nornir-netbox ruamel.yaml dotty-dict
+</code></pre><p>Lets define a custom configuration/settings file for the plugin in YAML as shown below:</p>
+<p><span style="font-family:monospace">my_config.yaml:</span></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#ff79c6">nb_url</span>: <span style="color:#f1fa8c">&#34;https://netbox.live&#34;</span>
+<span style="color:#ff79c6">nb_token</span>: <span style="color:#f1fa8c">&#34;123_NETBOX_API_TOKEN_456&#34;</span>
+<span style="color:#ff79c6">filter_by</span>:
+    <span style="color:#ff79c6">device_role</span>: [<span style="color:#f1fa8c">&#39;leaf-switch&#39;</span>, <span style="color:#f1fa8c">&#39;core-switch&#39;</span>, <span style="color:#f1fa8c">&#39;spine-switch&#39;</span>]
+<span style="color:#ff79c6">group_by</span>:
+    - name
+    - device_role.slug
+    - site.slug
+    - platform.slug
+</code></pre></div><p>So what do we have here ? The first two lines simply define the parameters needed for the plugin to reach Netbox. The next block <code>filter_by</code> defines query filters. In this case, we limit the queries to all Juniper and Cisco network devices of type spine, leaf and core. Filtering the Netbox queries is useful in cases where you also have other device types (e.g servers) that you dont want as part of your inventory. This functionality already exists in the plugin, and we can simply pass this data as is to the plugin.</p>
+<p>Next, we define the more interesting <code>group_by</code> clause. Here is where we define how we want Nornir groups to be created. If you are not familiar with groups in Nornir, you can refer to <a href="https://nornir.readthedocs.io/en/latest/tutorial/inventory.html">Nornir Inventory</a>. Essentially, Nornir allows each host in the inventory to be part of a set of groups. This will be the basis for our advanced filtering scheme at run-time. Now lets write some actual code that reads the config file and builds out our inventory from Netbox:</p>
+<p><span style="font-family:monospace">custom_inventory.py:</span></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">from</span> nornir_netbox.plugins.inventory.netbox <span style="color:#ff79c6">import</span> NetBoxInventory2
+<span style="color:#ff79c6">from</span> nornir.core.inventory <span style="color:#ff79c6">import</span> Inventory, Group
+
+<span style="color:#ff79c6">from</span> dotty_dict <span style="color:#ff79c6">import</span> dotty
+
+<span style="color:#ff79c6">import</span> ruamel.yaml
+
+
+<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">CustomNetboxInventory</span>(NetBoxInventory2):
+
+    <span style="color:#ff79c6">def</span> __init__(self, config_file, <span style="color:#ff79c6">**</span>kwargs):
+        <span style="color:#ff79c6">with</span> <span style="color:#8be9fd;font-style:italic">open</span>(config_file, <span style="color:#f1fa8c">&#39;r&#39;</span>) <span style="color:#ff79c6">as</span> f:
+            config <span style="color:#ff79c6">=</span> ruamel<span style="color:#ff79c6">.</span>yaml<span style="color:#ff79c6">.</span>safe_load(f)
+        <span style="color:#8be9fd;font-style:italic">super</span>()<span style="color:#ff79c6">.</span>__init__(
+            nb_url<span style="color:#ff79c6">=</span>config[<span style="color:#f1fa8c">&#39;nb_url&#39;</span>],
+            nb_token<span style="color:#ff79c6">=</span>config<span style="color:#ff79c6">.</span>get(<span style="color:#f1fa8c">&#39;nb_token&#39;</span>),
+            filter_parameters<span style="color:#ff79c6">=</span>config[<span style="color:#f1fa8c">&#39;filter_by&#39;</span>]
+        )
+        self<span style="color:#ff79c6">.</span>group_by <span style="color:#ff79c6">=</span> config[<span style="color:#f1fa8c">&#39;group_by&#39;</span>]
+
+    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">load</span>(self) <span style="color:#ff79c6">-&gt;</span> Inventory:
+        <span style="color:#f1fa8c">&#39;&#39;&#39; Override the base load method so we can add group data
+</span><span style="color:#f1fa8c">            to our hosts
+</span><span style="color:#f1fa8c">        &#39;&#39;&#39;</span>
+        inventory: Inventory <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">super</span>()<span style="color:#ff79c6">.</span>load()
+        <span style="color:#ff79c6">for</span> host <span style="color:#ff79c6">in</span> inventory<span style="color:#ff79c6">.</span>hosts<span style="color:#ff79c6">.</span>values():
+            <span style="color:#ff79c6">for</span> item <span style="color:#ff79c6">in</span> self<span style="color:#ff79c6">.</span>group_by:
+                dot <span style="color:#ff79c6">=</span> dotty(host<span style="color:#ff79c6">.</span>data)
+                <span style="color:#ff79c6">try</span>:
+                    group_name <span style="color:#ff79c6">=</span> dot<span style="color:#ff79c6">.</span>get(item)
+                <span style="color:#ff79c6">except</span> Exception:
+                    group_name <span style="color:#ff79c6">=</span> None
+                <span style="color:#ff79c6">if</span> group_name:
+                    host<span style="color:#ff79c6">.</span>groups<span style="color:#ff79c6">.</span>append(Group(name<span style="color:#ff79c6">=</span>group_name))
+                    inventory<span style="color:#ff79c6">.</span>groups<span style="color:#ff79c6">.</span>setdefault(group_name, {})
+        <span style="color:#ff79c6">return</span> inventory
+</code></pre></div><p>We first import the Nornir inventory plugin. Normally you would pass the <code>NetboxInventory2</code> class directly into the <code>InitNornir</code> function as a custom inventory plugin but since we want to extend its functionality, we define our own <code>CustomNetboxInvetory</code> plugin that inherits from the base plugin. This class contructor reads the YAML configuration file and passes the base parameters over to the parent.</p>
+<p>The Nornir inventory is returned in the <code>load()</code> method, which we override in our custom class to add the desired grouping functionality. First we call the parent <code>load()</code> method to get the base (ungrouped) inventory. Each host in the inventory has a data dict that stores host vars or attributes and a groups list that contains all the groups the host is part of. We iterate over each host, search for a grouping attribute within the host data and if a match is found, add that group to the group list of that host as well as to the inventory group dict. Note that we leave the group data empty for this use case. Using the <code>dotty-dict</code> library makes it easy to search for deeply nested dictionary data within the host object <em>( for e.g , given a= {&lsquo;foo&rsquo;: {&lsquo;bar&rsquo;: &lsquo;baz&rsquo;}}, you can call a[&lsquo;foo.bar&rsquo;] to get the value &lsquo;baz&rsquo; )</em>. As a result given the below JSON data from Netbox, we can easily match nested attributes (such as <code>role.slug</code>) and add those to the groups.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+    <span style="color:#ff79c6">&#34;count&#34;</span>: <span style="color:#bd93f9">1</span>,
+    <span style="color:#ff79c6">&#34;next&#34;</span>: <span style="color:#ff79c6">null</span>,
+    <span style="color:#ff79c6">&#34;previous&#34;</span>: <span style="color:#ff79c6">null</span>,
+    <span style="color:#ff79c6">&#34;results&#34;</span>: [
+        {
+            <span style="color:#ff79c6">&#34;id&#34;</span>: <span style="color:#bd93f9">100</span>,
+            <span style="color:#ff79c6">&#34;name&#34;</span>: <span style="color:#f1fa8c">&#34;dev1&#34;</span>,
+            <span style="color:#ff79c6">&#34;device_role&#34;</span>: {
+                <span style="color:#ff79c6">&#34;id&#34;</span>: <span style="color:#bd93f9">58</span>,
+                <span style="color:#ff79c6">&#34;name&#34;</span>: <span style="color:#f1fa8c">&#34;leaf&#34;</span>,
+                <span style="color:#ff79c6">&#34;slug&#34;</span>: <span style="color:#f1fa8c">&#34;leaf&#34;</span>
+            },
+            <span style="color:#ff79c6">&#34;platform&#34;</span>: {
+                <span style="color:#ff79c6">&#34;id&#34;</span>: <span style="color:#bd93f9">3</span>,
+                <span style="color:#ff79c6">&#34;name&#34;</span>: <span style="color:#f1fa8c">&#34;Junos&#34;</span>,
+                <span style="color:#ff79c6">&#34;slug&#34;</span>: <span style="color:#f1fa8c">&#34;junos&#34;</span>
+            },
+            <span style="color:#ff79c6">&#34;site&#34;</span>: {
+                <span style="color:#ff79c6">&#34;id&#34;</span>: <span style="color:#bd93f9">1</span>,
+                <span style="color:#ff79c6">&#34;name&#34;</span>: <span style="color:#f1fa8c">&#34;site1&#34;</span>,
+                <span style="color:#ff79c6">&#34;slug&#34;</span>: <span style="color:#f1fa8c">&#34;site1&#34;</span>
+            }
+        }
+    ]
+}
+</code></pre></div><p>Note that we are performing only minimal error checking or exception handling in the above code, which is something you should do more of in production code. We can then use our custom inventory class directly when isntantiating the Nornir object. From a Python shell:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#ff79c6">from</span> nornir <span style="color:#ff79c6">import</span> InitNornir
+<span style="color:#ff79c6">&gt;&gt;</span> nr <span style="color:#ff79c6">=</span> InitNornir(
+    runner<span style="color:#ff79c6">=</span>{
+        <span style="color:#f1fa8c">&#34;plugin&#34;</span>: <span style="color:#f1fa8c">&#34;threaded&#34;</span>,
+        <span style="color:#f1fa8c">&#34;options&#34;</span>: {
+            <span style="color:#f1fa8c">&#34;num_workers&#34;</span>: <span style="color:#bd93f9">100</span>,
+        },
+    },
+    inventory<span style="color:#ff79c6">=</span>{
+        <span style="color:#f1fa8c">&#39;plugin&#39;</span>: <span style="color:#f1fa8c">&#39;custom_inventory.CustomNetboxInventory&#39;</span>,
+        <span style="color:#f1fa8c">&#39;options&#39;</span>: {
+            <span style="color:#f1fa8c">&#39;config_file&#39;</span>: <span style="color:#f1fa8c">&#39;my_config.yaml&#39;</span>,
+         }
+    }
+)
+PluginNotRegistered                       Traceback (most recent call last)
+<span style="color:#ff79c6">&lt;</span>ipython<span style="color:#ff79c6">-</span><span style="color:#8be9fd;font-style:italic">input</span><span style="color:#ff79c6">-</span><span style="color:#bd93f9">3</span><span style="color:#ff79c6">-</span><span style="color:#bd93f9">1</span>fe3436d24eb<span style="color:#ff79c6">&gt;</span> <span style="color:#ff79c6">in</span> <span style="color:#ff79c6">&lt;</span>module<span style="color:#ff79c6">&gt;</span>
+<span style="color:#ff79c6">...</span>
+PluginNotRegistered: plugin <span style="color:#f1fa8c">&#39;custom_inventory.CustomNetboxInventory&#39;</span> <span style="color:#ff79c6">is</span> <span style="color:#ff79c6">not</span> registered
+</code></pre></div><p>If we try to use it the old fashioned way, we hit an exception. The reason for the above exception is detailed in the Nornir docs:</p>
+<pre><code>Starting with nornir3 some plugins need to be registered in order to be used. In particular:
+
+inventory plugins
+transform functions
+connection plugins
+runners
+</code></pre><p>Thankfully, we can do it programatically using <code>InventoryPluginRegister</code>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#ff79c6">from</span> nornir.core.plugins.inventory <span style="color:#ff79c6">import</span> InventoryPluginRegister
+<span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#ff79c6">from</span> custom_inventory <span style="color:#ff79c6">import</span> CustomNetboxInventory
+<span style="color:#ff79c6">&gt;&gt;&gt;</span> InventoryPluginRegister<span style="color:#ff79c6">.</span>register(<span style="color:#f1fa8c">&#34;custom-inventory&#34;</span>, CustomNetboxInventory)
+<span style="color:#ff79c6">&gt;&gt;&gt;</span> nr <span style="color:#ff79c6">=</span> InitNornir(
+    runner<span style="color:#ff79c6">=</span>{
+        <span style="color:#f1fa8c">&#34;plugin&#34;</span>: <span style="color:#f1fa8c">&#34;threaded&#34;</span>,
+        <span style="color:#f1fa8c">&#34;options&#34;</span>: {
+            <span style="color:#f1fa8c">&#34;num_workers&#34;</span>: <span style="color:#bd93f9">100</span>,
+        },
+    },
+    inventory<span style="color:#ff79c6">=</span>{
+        <span style="color:#f1fa8c">&#39;plugin&#39;</span>: <span style="color:#f1fa8c">&#39;custom-inventory&#39;</span>,
+        <span style="color:#f1fa8c">&#39;options&#39;</span>: {
+            <span style="color:#f1fa8c">&#39;config_file&#39;</span>: <span style="color:#f1fa8c">&#39;my_config.yaml&#39;</span>,
+         }
+    }
+)
+<span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#8be9fd;font-style:italic">len</span>(nr<span style="color:#ff79c6">.</span>inventory<span style="color:#ff79c6">.</span>hosts)
+<span style="color:#bd93f9">12</span>
+
+<span style="color:#ff79c6">&gt;&gt;&gt;</span> nr<span style="color:#ff79c6">.</span>inventory<span style="color:#ff79c6">.</span>hosts<span style="color:#ff79c6">.</span>keys()
+dict_keys([<span style="color:#f1fa8c">&#39;core1&#39;</span>, <span style="color:#f1fa8c">&#39;core2&#39;</span>, <span style="color:#f1fa8c">&#39;leaf1&#39;</span>, <span style="color:#f1fa8c">&#39;leaf2&#39;</span>, <span style="color:#f1fa8c">&#39;leaf3&#39;</span>, <span style="color:#f1fa8c">&#39;leaf4&#39;</span>, <span style="color:#f1fa8c">&#39;router1&#39;</span>, <span style="color:#f1fa8c">&#39;router2&#39;</span>, <span style="color:#f1fa8c">&#39;spine1&#39;</span>, <span style="color:#f1fa8c">&#39;spine2&#39;</span>, <span style="color:#f1fa8c">&#39;spine3&#39;</span>, <span style="color:#f1fa8c">&#39;spine4&#39;</span>])
+
+<span style="color:#ff79c6">&gt;&gt;&gt;</span> nr<span style="color:#ff79c6">.</span>inventory<span style="color:#ff79c6">.</span>groups<span style="color:#ff79c6">.</span>keys()
+dict_keys([<span style="color:#f1fa8c">&#39;core1&#39;</span>, <span style="color:#f1fa8c">&#39;core-switch&#39;</span>, <span style="color:#f1fa8c">&#39;lab1&#39;</span>, <span style="color:#f1fa8c">&#39;core2&#39;</span>, <span style="color:#f1fa8c">&#39;leaf1&#39;</span>, <span style="color:#f1fa8c">&#39;leaf-switch&#39;</span>, <span style="color:#f1fa8c">&#39;cisco-ios&#39;</span>, <span style="color:#f1fa8c">&#39;leaf2&#39;</span>, <span style="color:#f1fa8c">&#39;leaf3&#39;</span>, <span style="color:#f1fa8c">&#39;leaf4&#39;</span>, <span style="color:#f1fa8c">&#39;router1&#39;</span>, <span style="color:#f1fa8c">&#39;router&#39;</span>, <span style="color:#f1fa8c">&#39;juniper-junos&#39;</span>, <span style="color:#f1fa8c">&#39;router2&#39;</span>, <span style="color:#f1fa8c">&#39;spine1&#39;</span>, <span style="color:#f1fa8c">&#39;spine-switch&#39;</span>, <span style="color:#f1fa8c">&#39;arista-eos&#39;</span>, <span style="color:#f1fa8c">&#39;spine2&#39;</span>, <span style="color:#f1fa8c">&#39;spine3&#39;</span>, <span style="color:#f1fa8c">&#39;spine4&#39;</span>])
+
+<span style="color:#ff79c6">&gt;&gt;&gt;</span> nr<span style="color:#ff79c6">.</span>inventory<span style="color:#ff79c6">.</span>hosts[<span style="color:#f1fa8c">&#39;spine1&#39;</span>]<span style="color:#ff79c6">.</span>groups
+[<span style="color:#f1fa8c">&#39;spine1&#39;</span>, <span style="color:#f1fa8c">&#39;spine-switch&#39;</span>, <span style="color:#f1fa8c">&#39;lab1&#39;</span>, <span style="color:#f1fa8c">&#39;arista-eos&#39;</span>]
+</code></pre></div><p>You must be wondering how we actually have 12 devices in the inventory. If you noticed above in our YAML configuration, I am using the Netbox URL <code>https://netbox.live</code>. This is not a random URL , rather, a fully functional Netbox demo website ( complete with some test data ) that is hosted online by some good samaritans. This is awesome, since it allows us to test out our inventory code without having to run Netbox locally. From the above output, you can see that we have successfully grouped our devices by the parameters specified in the config. For example. the device <code>spine1</code> is now part of the groups <code>['spine1', 'spine-switch', 'lab1', 'arista-eos']</code> ( NB: We are also grouping by the device name itself, the significance of this will be apparant in the next section.)</p>
+<h2 id="adding-run-time-filtering">Adding run-time filtering</h2>
+<p>With the appropriate grouping done, we are now well equipped to run tasks on any specific group of devices that we choose. To illustrate how useful this is in practice, assume we have a simple task defined that simply prints out the IPv4 address of the given host:</p>
+<p><span style="font-family:monospace">simple_task.py:</span></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">
+<span style="color:#ff79c6">from</span> nornir.core.task <span style="color:#ff79c6">import</span> Task, Result
+
+<span style="color:#ff79c6">def</span> <span style="color:#50fa7b">simple_task</span>(task: Task) <span style="color:#ff79c6">-&gt;</span> Result:
+    host_data <span style="color:#ff79c6">=</span> task<span style="color:#ff79c6">.</span>host<span style="color:#ff79c6">.</span>data
+    v4Addr <span style="color:#ff79c6">=</span> host_data[<span style="color:#f1fa8c">&#39;primary_ip4&#39;</span>][<span style="color:#f1fa8c">&#39;address&#39;</span>]
+    msg <span style="color:#ff79c6">=</span> f<span style="color:#f1fa8c">&#39;Host {task.host.name} has ipv4 address {v4Addr}&#39;</span>
+    <span style="color:#ff79c6">return</span> Result(host<span style="color:#ff79c6">=</span>task<span style="color:#ff79c6">.</span>host, result<span style="color:#ff79c6">=</span>msg)
+</code></pre></div><p>Recall that a task is nothing but a function that takes in a <code>Task</code> object and returns a <code>Result</code>. Now if we wanted to run this task against every host, we would do:</p>
+<pre><code>&gt;&gt;&gt; from simple_task import simple_task
+&gt;&gt;&gt; from nornir_utils.plugins.functions import print_result
+&gt;&gt;&gt; print_result(nr.run(task=simple_task))
+simple_task*********************************************************************
+* core1 ** changed : False *****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host core1 has ipv4 address 172.17.2.1/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* core2 ** changed : False *****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host core2 has ipv4 address 172.17.2.2/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* leaf1 ** changed : False *****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host leaf1 has ipv4 address 172.17.4.1/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* leaf2 ** changed : False *****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host leaf2 has ipv4 address 172.17.4.2/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* leaf3 ** changed : False *****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host leaf3 has ipv4 address 172.17.4.3/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* leaf4 ** changed : False *****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host leaf4 has ipv4 address 172.17.4.4/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* router1 ** changed : False ***************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host router1 has ipv4 address 172.17.1.1/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* router2 ** changed : False ***************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host router2 has ipv4 address 172.17.1.2/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* spine1 ** changed : False ****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host spine1 has ipv4 address 172.17.3.1/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* spine2 ** changed : False ****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host spine2 has ipv4 address 172.17.3.2/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* spine3 ** changed : False ****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host spine3 has ipv4 address 172.17.3.3/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* spine4 ** changed : False ****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host spine4 has ipv4 address 172.17.3.4/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+</code></pre><p>But how do we restrict the task to run only against say, spine-switches ? Or what if we only wanted to run against spines that are only Cisco-IOS ? Better yet, how do we only run against only non Cisco-IOS spines that are in site XYZ ?? The answer of course lies in Nornir&rsquo;s <a href="https://nornir.readthedocs.io/en/latest/tutorial/inventory.html#Advanced-filtering">F Object</a>, which is an advanced inventory filtering mechanism that ships with Nornir.</p>
+<p>In a real world application or framework where you have a collection of tasks or scripts, you would normally want to allow the end user to express these constraints in a user-friendly way, ideally using a CLI argument. One such way is by using query expressions as shown below:</p>
+<pre><code>leaf1
+
+spine-switch,leaf-switch&amp;cisco-ios
+
+spine-switch&amp;SiteA&amp;!cisco-ios
+</code></pre><p>This may seem like a simpler version of Ansible&rsquo;s inventory patterns and it indeed is. For a majority of use cases, something as simple as this should suffice. Lets see how we can build an inventory filter using these queries.</p>
+<p>The simplest use case of filtering by a single attribute can be implemented quite simply by using <code>nr.filter(F(k=v))</code>. However, a broader implementation that could also match on a group name could be achieved by using <code>nr.filter(F(k__contains=v))</code>. In both cases, k is either a simple or a nested device attribute or the word <code>groups</code> and v is the attribute value or the group name. The <code>__contains</code> filter normally serves to find an item inside an iterable, but also works for strings since a string itself is also an iterable in Python. The F object is quite handy in that it also provides the AND (&amp;) , OR (|) and NEGTATE (~) operators so we can now mix and match:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#6272a4"># match hosts that belong to site A and are spines</span>
+nr<span style="color:#ff79c6">.</span>filter(F(site__name__contains<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;A&#39;</span>) <span style="color:#ff79c6">&amp;</span> F(device_role___name__contains<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;spine&#39;</span>))  <span style="color:#6272a4"># based on actual netbox JSON data</span>
+<span style="color:#ff79c6">**</span> OR <span style="color:#ff79c6">**</span>
+nr<span style="color:#ff79c6">.</span>filter(F(groups__contains<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;A&#39;</span>) <span style="color:#ff79c6">&amp;</span> F(groups__contains<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;spine&#39;</span>))  <span style="color:#6272a4"># since we grouped by site and device_role</span>
+
+<span style="color:#6272a4"># match hosts that is either a spine or a leaf</span>
+nr<span style="color:#ff79c6">.</span>filter(F(groups__contains<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;spine&#39;</span>) <span style="color:#ff79c6">|</span> F(groups__contains<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;leaf&#39;</span>))
+
+<span style="color:#6272a4"># match hosts that are belong to site A but are NOT spines</span>
+nr<span style="color:#ff79c6">.</span>filter(F(groups__contains<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;A&#39;</span>) <span style="color:#ff79c6">&amp;</span> <span style="color:#ff79c6">~</span>F(groups__contains<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;spines&#39;</span>))
+</code></pre></div><p>Note that using device attributes requires you to know the structure of the JSON data returned from netbox in order to create the correct nested hierarchy (separated by double underscores). Since we already grouped hosts based on some of these interesting attributes before, we can simply use the <code>groups__contains</code> filter parameter instead and make things simpler. Given a query string such as <code>spine-switch,leaf-switch&amp;cisco-ios</code>, we can split the terms up using boolean operators to get:</p>
+<pre><code>(spine_switch OR leaf_switch) AND (cisco-ios)
+</code></pre><p>Then its a simple matter of constructing an F object for each term and using Python&rsquo;s Boolean operators to reduce them down. i.e</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">(F(groups__contains<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;spine_switch&#39;</span>) <span style="color:#ff79c6">|</span> F(groups__contains<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;leaf-switch&#39;</span>)) <span style="color:#ff79c6">&amp;</span> F(groups__contains<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;cisco-ios&#39;</span>)
+</code></pre></div><p>We can now write a function that can accept a worded query as indicated above and return the filtered inventory based on this query using the built-in <code>or_</code>, <code>and_</code> operators and the <code>reduce</code> function:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">from</span> nornir.core <span style="color:#ff79c6">import</span> Nornir
+<span style="color:#ff79c6">from</span> nornir.core.filter <span style="color:#ff79c6">import</span> F
+<span style="color:#ff79c6">from</span> operator <span style="color:#ff79c6">import</span> and_, or_
+<span style="color:#ff79c6">from</span> functools <span style="color:#ff79c6">import</span> <span style="color:#8be9fd;font-style:italic">reduce</span>
+
+<span style="color:#ff79c6">def</span> <span style="color:#50fa7b">filter_inventory</span>(nr: Nornir, query_string: <span style="color:#8be9fd;font-style:italic">str</span>):
+    filters <span style="color:#ff79c6">=</span> []
+    <span style="color:#6272a4"># split query into terms</span>
+    <span style="color:#ff79c6">for</span> term <span style="color:#ff79c6">in</span> query_string<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#39;&amp;&#39;</span>):
+        <span style="color:#6272a4"># a &#39;not&#39; operation is indicated by a preceding !</span>
+        negate <span style="color:#ff79c6">=</span> True <span style="color:#ff79c6">if</span> term<span style="color:#ff79c6">.</span>startswith(<span style="color:#f1fa8c">&#39;!&#39;</span>) <span style="color:#ff79c6">else</span> False
+        <span style="color:#6272a4"># split up all values separated by commas - these will be OR&#39;d</span>
+        values <span style="color:#ff79c6">=</span> term[<span style="color:#bd93f9">1</span>:]<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#39;,&#39;</span>) <span style="color:#ff79c6">if</span> negate <span style="color:#ff79c6">else</span> term<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#39;,&#39;</span>)
+        sub_filters <span style="color:#ff79c6">=</span> []
+        <span style="color:#ff79c6">for</span> val <span style="color:#ff79c6">in</span> values:
+            f_object <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">~</span>F(groups__contains<span style="color:#ff79c6">=</span>val) <span style="color:#ff79c6">if</span> negate <span style="color:#ff79c6">else</span> F(groups__contains<span style="color:#ff79c6">=</span>val)
+            sub_filters<span style="color:#ff79c6">.</span>append(f_object)
+        <span style="color:#6272a4"># reduce the list of F objects using boolean OR </span>
+        ord_f_object <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">reduce</span>(or_, sub_filters)
+        filters<span style="color:#ff79c6">.</span>append(ord_f_object)
+    <span style="color:#6272a4"># finally, reduce the query terms using boolean AND and filter by the final F object expression</span>
+    <span style="color:#ff79c6">return</span> nr<span style="color:#ff79c6">.</span>filter(<span style="color:#8be9fd;font-style:italic">reduce</span>(and_, filters))
+</code></pre></div><p>In this function, we first split up the query string into different terms (splitting on &lsquo;&amp;').</p>
+<p>Next we perform a boolean OR on all values in a given term that are separated by commas. This is achieved using Python&rsquo;s <code>or_</code> which lets you write boolean operands as functions. The benefit of this is that you can then use the <code>reduce</code> function to reduce a list of F objects down to a single object using OR.</p>
+<p>Finally, we reduce the individual query terms using boolean AND and filter the inventory using the final F object.</p>
+<p>This method relies on accurate grouping of hosts for all possible filter combinations. Because we&rsquo;ve made this configurable using a YAML file, it is easy to add more groupings in the future if needed. We can test the above filter using the sample data from netbox.live:</p>
+<pre><code>&gt;&gt;&gt; from simple_task import simple_task
+&gt;&gt;&gt; from nornir_utils.plugins.functions import print_result
+&gt;&gt;&gt;
+&gt;&gt;&gt; filtered = filter_inventory(nr, 'spine-switch,leaf-switch&amp;cisco-ios')
+&gt;&gt;&gt; filtered.inventory.hosts.keys()
+dict_keys(['leaf1', 'leaf2', 'leaf3', 'leaf4'])
+&gt;&gt;&gt;
+&gt;&gt;&gt; print_result(filtered.run(task=simple_task))
+simple_task*********************************************************************
+* leaf1 ** changed : False *****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host leaf1 has ipv4 address 172.17.4.1/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* leaf2 ** changed : False *****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host leaf2 has ipv4 address 172.17.4.2/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* leaf3 ** changed : False *****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host leaf3 has ipv4 address 172.17.4.3/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* leaf4 ** changed : False *****************************************************
+vvvv simple_task ** changed : False vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv INFO
+Host leaf4 has ipv4 address 172.17.4.4/32
+^^^^ END simple_task ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+&gt;&gt;&gt; filtered = filter_inventory(nr, 'spine-switch,leaf-switch&amp;!cisco-ios')
+&gt;&gt;&gt; filtered.inventory.hosts.keys()
+dict_keys(['spine1', 'spine2', 'spine3', 'spine4'])
+</code></pre><p>As can be seen, only a subset of the inventory matching our filter is now returned. One can easily adapt this concept into a CLI tool or framework that performs tasks against specific groups of devices as specified by the user. Since everything is pure Python, one can also easily extend the functionality in any way imaginable - for example, to create nested groups, adding group specific data and so on. This was just one quick example of how we can extend the out-of-the-box functionality of Nornir to create custom workflows and patterns.</p>
+<h3 id="references">References</h3>
+<ul>
+<li>Nornir Inventories: <a href="https://nornir.readthedocs.io/en/latest/tutorial/inventory.html">https://nornir.readthedocs.io/en/latest/tutorial/inventory.html</a></li>
+<li>Live Netbox demo: <a href="https://netbox.live">https://netbox.live</a></li>
+<li>Ansible Pattern matching: <a href="https://docs.ansible.com/ansible/latest/user_guide/intro_patterns.html">https://docs.ansible.com/ansible/latest/user_guide/intro_patterns.html</a></li>
+</ul>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2020/11/28/automatic_service_discovery_anycast" data-toggle="tooltip" data-placement="top" title="BGP based Anycast as a Service">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "mayuresh82-gitub-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="NRE-Bytes" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:nre-bytes@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+
+                    
+
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/mayuresh82">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/mayuresh-gaitonde-3232001/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://stackoverflow.com/users/11501174/mayuresh-gaitonde">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-stack-overflow fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+            
+                    
+                    
+                    
+            
+            
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; NRE-Bytes 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+</body>
+</html>
