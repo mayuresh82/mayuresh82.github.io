@@ -3,17 +3,62 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://mayuresh82.github.io/2020/12/25/nornir_inventories/</loc>
+    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/categories/</loc>
+    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/tags/dynamic/</loc>
+    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/categories/general/</loc>
+    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/tags/inventory/</loc>
+    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/tags/netbox/</loc>
+    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/tags/nornir/</loc>
+    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/</loc>
+    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/post/</loc>
+    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/tags/</loc>
+    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://mayuresh82.github.io/tags/anycast/</loc>
     <lastmod>2020-11-28T15:05:46-08:00</lastmod>
   </url>
   
   <url>
     <loc>https://mayuresh82.github.io/2020/11/28/automatic_service_discovery_anycast/</loc>
-    <lastmod>2020-11-28T15:05:46-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://mayuresh82.github.io/categories/</loc>
     <lastmod>2020-11-28T15:05:46-08:00</lastmod>
   </url>
   
@@ -38,22 +83,12 @@
   </url>
   
   <url>
-    <loc>https://mayuresh82.github.io/</loc>
-    <lastmod>2020-11-28T15:05:46-08:00</lastmod>
+    <loc>https://mayuresh82.github.io/categories/about/</loc>
+    <lastmod>2019-05-06T15:05:46-08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://mayuresh82.github.io/post/</loc>
-    <lastmod>2020-11-28T15:05:46-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://mayuresh82.github.io/tags/</loc>
-    <lastmod>2020-11-28T15:05:46-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://mayuresh82.github.io/categories/general/</loc>
+    <loc>https://mayuresh82.github.io/top/about/</loc>
     <lastmod>2019-05-06T15:05:46-08:00</lastmod>
   </url>
   
@@ -78,19 +113,16 @@
   </url>
   
   <url>
+    <loc>https://mayuresh82.github.io/top/</loc>
+    <lastmod>2019-05-06T15:05:46-08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://mayuresh82.github.io/search/placeholder/</loc>
   </url>
   
   <url>
-    <loc>https://mayuresh82.github.io/top/about/</loc>
-  </url>
-  
-  <url>
     <loc>https://mayuresh82.github.io/search/</loc>
-  </url>
-  
-  <url>
-    <loc>https://mayuresh82.github.io/top/</loc>
   </url>
   
 </urlset>
