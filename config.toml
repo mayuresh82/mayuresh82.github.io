@@ -16,7 +16,7 @@ home = ["HTML", "RSS", "Algolia"]
 [params]
   header_image = "img/banner-main.jpg"
   SEOTitle = "mayuresh82 | Network Reliability Engineering"
-  description = "Network Automation Blog with a focus on scale and reliability"
+  description = "Network Automation Blog with a focus on real world problems"
   keyword = "network, automation, build, anycast, scale, reliability, NRE, framework"
   slogan = "Morsels of NRE Wisdom"
 
@@ -105,3 +105,5 @@ params = ["categories", "tags"]
     startLevel = 1
   [markup.highlight]
     style = "dracula"
+  [markup.goldmark.renderer]
+    unsafe = true

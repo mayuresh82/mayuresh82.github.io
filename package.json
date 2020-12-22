@@ -1,0 +1,33 @@
+{
+  "name": "mayuresh82.github.io",
+  "version": "1.0.0",
+  "description": "Mayuresh Blog",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"algolia": "atomic-algolia"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mayuresh82/mayuresh82.github.io.git"
+  },
+  "keywords": [
+    "nre",
+    "network",
+    "automation",
+    "python",
+    "golang"
+  ],
+  "author": "Mayuresh Gaitonde",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mayuresh82/mayuresh82.github.io/issues"
+  },
+  "homepage": "https://github.com/mayuresh82/mayuresh82.github.io#readme",
+  "dependencies": {
+    "atomic-algolia": "^0.3.19"
+  }
+}

@@ -21,9 +21,9 @@
     
 
     
-    <meta name="description" content="Network Automation Blog with a focus on scale and reliability">
-    <meta property="og:description" content="Network Automation Blog with a focus on scale and reliability" />
-    <meta property="twitter:description" content="Network Automation Blog with a focus on scale and reliability" />
+    <meta name="description" content="Network Automation Blog with a focus on real world problems">
+    <meta property="og:description" content="Network Automation Blog with a focus on real world problems" />
+    <meta property="twitter:description" content="Network Automation Blog with a focus on real world problems" />
     
 
     
@@ -96,6 +96,10 @@
                         <a href="/">Home</a>
                     </li>
                     
+                        
+                        <li>
+                            <a href="/categories/about">about</a>
+                        </li>
                         
                         <li>
                             <a href="/categories/general">general</a>
@@ -188,10 +192,11 @@
                             mayuresh82
                          
                         on 
-                        Monday, May 6, 2019
+                        May 6, 2019
                         
                         
                         
+						- 7 minute read
                     </span>
                 </div>
             </div>
@@ -229,17 +234,17 @@
                 <h2 id="getting-started-with-network-automation">Getting Started with Network Automation</h2>
 <p>Network Automation is the “art” of automating repetitive tasks related to network provisioning, deployment, monitoring and alerting. The reason its an art is because you can conceptualize and develop very creative methods to achieve your network automation goals. To get started, it is important to first identify a problem that needs to be solved, ideally a simple one. This helps establish clear goals and helps navigate the myriad web of libraries and open source tools available at your disposal. A good example would be network device configuration management or device provisioning. Setting a goal is usually as important as solving the problem itself. The below points are meant to act as guidelines for the network engineer looking to introduce automation into the day to day operations of a typical enterprise network.</p>
 <p><strong>Learn Python:</strong> You may have heard philosophies such as &ldquo;you do not need to know coding to begin automating your network&hellip;&rdquo; before. And while this may be partially true in the short term, the long term success of your automation journey depends on learning and <em>being good at</em> at least one programming language - Python being the language of choice due to its simple syntax and user friendliness. You do not need to be an expert but once you are able to write clean and readable code, you will realize that it opens up many more avenues for innovation and creativity. It is in every network engineer&rsquo;s best interest to understand how to interact with a network device at the protocol level rather than to write a few lines of YAML and let &ldquo;magic&rdquo; happen behind the scenes. Remember, you would not be a network engineer today if you had not learnt the OSI model on day 1.
-<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<br/><br/></p>
 <p><strong>Keep it simple:</strong> This one is a no brainer. If this is your initial foray into the world of network automation, you want to make sure the barrier to entry is kept super low. Automation frameworks can get very complex very fast (often times to their own detriment) and can easily scare network engineers away. Use just the tools you need to get the current problem solved and consider supportability and longer term maintainability. Consider the problem of automating network device configuration management. Once you start exploring whats out there, you will quickly get confused enough to want to rip your hair out. Puppet, Chef, Ansible, Salt, the options don’t seem to end. If you are willing to ignore any fancy feature sets, network configuration management really only requires a good templating engine, a scalable and procedural way to push configs out to devices and possibly some archiving/restoring capabilities. Need to automate network telemetry/ metric collection ? Keep the fancy stuff (GNMI, Streaming Telemetry) aside and start with simple XML/Netconf. Knowing exactly what you need puts you in a good position to make a sensible choice.
-<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<br/><br/></p>
 <p><strong>Start with a Source of Truth:</strong> You have probably heard this before and it is absolutely true. A source of truth allows you to define the desired state of your network, including network inventories, ip addresses, topologies, circuits and the like. A source of truth is usually the building block around which many other automation workflows and tooling will revolve. You will find that over time, almost every single piece of automation tooling will either plug into or rely on the source of truth. Reiterating point 1 above, nothing fancy needed here: a simple relational database will suffice. Start with the current network steady state and use the source of truth to express intent for future demands.
-<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<br/><br/></p>
 <p><strong>To Open Source or not to Open Source:</strong> This one is can get tricky if you are just getting started with building network automation frameworks. The general instinct for folks who are just getting started is to say “since its out there, has 10k starts on github and is used by some leading tech companies, it has to be good ! So lets jump on it !” . Needless to say, this approach could backfire in the long run. Open source software is not burden free, it comes with its own set of challenges and problems including but not limited to working with code written by others (thereby losing control over bug-fixes and feature sets) and learning often cryptic and inflexible DSLs (Domain Specific Languages). Take the source of truth example from above. There are some really good open source solutions available for this. Unfortunately, they also excel at tying you down to a schema and API that worked best for the company that open sourced it, plus or minus some changes from the community. Care needs to be taken to avoid open source &ldquo;tie-in&rdquo;. Fundamental tasks are often best solved by using simple, flexible in house solutions, especially when they add strategic value to your team. This allows you to get a real taste of what network automation is all about without having to navigate the complex web of open-source software. On the other hand, if you want to create a dashboard with network metrics, trying to write a time series database or a dash-boarding solution in-house without an army of engineers or expertise is simply not practical. Feel free to chose the best reviewed open source solution for this one.
-<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<br/><br/></p>
 <p><strong>Get inspired by the DevOps/SRE folks:</strong> Perhaps the best resource you may already have at your disposal when you are start looking to automate your network is your in-house SRE/DevOps team (most web scale companies have one.) This is the team that is responsible for deploying, provisioning, monitoring and alerting the server fleet in your organization. Sound familiar ? Replace server with network device and you can see the similarities in the goals. For many of the common objectives, you may be able to leverage infrastructure that the server team has already laid out to build your network tooling on top of. Common examples of this are database infrastructures (time-series/sql), software orchestration and containerization solutions such as Docker, Kubernetes and alert management solutions.
-<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<br/><br/></p>
 <p><strong>Optimize for scale:</strong> This is one piece of advice you will hear from engineers battle hardened from deploying automation solutions over a number of years, especially in companies that have experienced growth. Regardless of whether you manage a 10 device flat layer 2 network or a 10,000 device clos datacenter fabric, design your frameworks with scalability in mind. The last thing you want is your Python based XML collection engine to choke on more metrics than it can handle causing you to lose data-points and thus create gaps in your network monitoring. Going back to point 3 above, feel free to take inspiration from server management principles to scale and grow your network automation frameworks.
-<!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<br/><br/></p>
 <p><strong>Trust your traditional skills</strong>: Last but not least, remember that the person who is in the best possible position to automate a data network is the Network Engineer himself/herself. Not a Software Engineer, not a DevOps type guy with a networking background. You know the ins and outs of your network, you know the pain points that create huge manual burden and you know what it takes to find and fix problems. Trying to build a workflow to upgrade the code for thousands of devices ? You’ve been doing that manually for years already ! Trying to automate the task of taking MPLS nodes out of service ? Knowing how to steer MPLS traffic away from an LSR is half the job done. The other half is usually a matter of logistics and tracking (well maybe more than that, but you get the picture.)</p>
 <p>Once you start exploring the world of network automation, you will most likely never look back. It can be initially hard to transition away from using your strengths (traditional networking) to mostly uncharted territory where success is not clearly defined. However, automation is a gift that keeps on giving. The more of it you adopt, the more rewarding the experience. So get your coding hats on ! (and dont forget unit tests).</p>
 
@@ -296,6 +301,14 @@
                     <hr class="hidden-sm hidden-xs">
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                         
                         
                         
