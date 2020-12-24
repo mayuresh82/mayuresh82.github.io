@@ -4,7 +4,7 @@ theme = "cleanwhite"
 languageCode = "en-us"
 # Enable comments by entering your Disqus shortname
 disqusShortname = "mayuresh82-gitub-io"
-googleAnalytics = ""
+googleAnalytics = "UA-185781460-1"
 preserveTaxonomyNames = true
 paginate = 5 #frontpage pagination
 hasCJKLanguage = true
