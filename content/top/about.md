@@ -13,4 +13,4 @@ Career wise, I have led web scale network automation efforts at Facebook and Rob
 
 When I am not working, I am mostly found lifting weights in the gym or recovering in the kitchen. 
 
-Feel free to connect with me via [Github](https://github.com/mayuresh82) or [LinkedIn](www.linkedin.com/in/mayuresh-gaitonde-3232001).
+Feel free to connect with me via [Github](https://github.com/mayuresh82) or [LinkedIn](https://www.linkedin.com/in/mayuresh-gaitonde-3232001).
