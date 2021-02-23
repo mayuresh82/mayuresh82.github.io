@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="NRE-Bytes">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://mayuresh82.github.io/img/banner-main.jpg">
+    <meta property="twitter:image" content="https://mayuresh82.github.io/img/banner-main.jpg" />
+    
+
+    
+    <meta name="title" content="Building an Edge Traffic Controller - Part 1" />
+    <meta property="og:title" content="Building an Edge Traffic Controller - Part 1" />
+    <meta property="twitter:title" content="Building an Edge Traffic Controller - Part 1" />
+    
+
+    
+    <meta name="description" content="Network Automation Blog with a focus on real world problems">
+    <meta property="og:description" content="Network Automation Blog with a focus on real world problems" />
+    <meta property="twitter:description" content="Network Automation Blog with a focus on real world problems" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="network, automation, build, anycast, scale, reliability, NRE, framework">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Building an Edge Traffic Controller - Part 1-mayuresh82 | Network Reliability Engineering</title>
+
+    <link rel="canonical" href="/2021/02/23/edge-controller-part1">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">NRE-Bytes</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/general">general</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/infra">infra</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/epe-pt1.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/sdn" title="SDN">
+                            SDN
+                        </a>
+                        
+                        <a class="tag" href="/tags/sflow" title="sflow">
+                            sflow
+                        </a>
+                        
+                        <a class="tag" href="/tags/controller" title="controller">
+                            controller
+                        </a>
+                        
+                        <a class="tag" href="/tags/bgp" title="bgp">
+                            bgp
+                        </a>
+                        
+                    </div>
+                    <h1 class="heading">Building an Edge Traffic Controller - Part 1</h1>
+                    <h2 class="subheading">A Proof of Concept implementation of a Software Defined Edge traffic controller using Sflow and GoBGP</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                            mayuresh82
+                         
+                        on 
+                        February 23, 2021
+                        
+                        
+                        
+						- 16 minute read
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#the-problem">The Problem</a></li>
+        <li><a href="#setting-the-stage">Setting the Stage</a></li>
+        <li><a href="#network-topology">Network Topology</a></li>
+        <li><a href="#data-collection-via-sflow">Data Collection via Sflow</a></li>
+        <li><a href="#choosing-a-router-vm">Choosing a Router VM</a></li>
+        <li><a href="#bgp-listenerinjector">BGP Listener/Injector</a></li>
+        <li><a href="#controller">Controller</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <p>2017 was the year of the Software Defined Network (SDN). Apart from other things like new players jumping onto the SDN space and a bunch of new SD-WAN offerings, two prominent innovation leaders - Google and Facebook - both released blogs and papers on their software defined edge network. Google&rsquo;s solution; named <a href="https://www.cs.princeton.edu/courses/archive/fall17/cos561/papers/espresso17.pdf">Espresso</a>, is likely a more battle tested and production-hardened solution owning to years of R&amp;D and testing. It is, however (or at least in my opinion) a lot more complex than Facebook&rsquo;s <a href="https://research.fb.com/wp-content/uploads/2017/08/sigcomm17-final177-2billion.pdf">Edge Fabric</a> that uses a much simpler approach to solving the same problem - which is to overcome BGP&rsquo;s inability to take link performance ( which translates to application performance) into account for its routing decisions.</p>
+<p>While I was admittedly employed at Facebook during the work they did on Edge Fabric, I was not directly working on any parts of the solution myself, be it design, development or deployment. I did however, gain some high level exposure to the real world nuances and implications of deploying such systems into production. I thought it would be a fun little effort to implement a solution similar to Edge Fabric ( or rather a highly simplified, assumption driven, completely non production-worthy version of it ) given its simplicity compared to other alternatives. So in this two part series, I am going to explore the design and implementation of a software defined edge network modeled along the lines of Edge Fabric, complete with a sample (virtualized) topology, SDN controller and other components. Note that this exercise is meant to be a pure proof-of-concept demo, showing how a system like Edge Fabric could take shape in real production environments.</p>
+<h2 id="the-problem">The Problem</h2>
+<p>Before diving into details, a quick recap on the problem that these systems attempt to solve. BGP only routes using best path information and path attributes. Thus it fails to account for link performance. An overutilized link or a link experiencing errors can quickly degrade application performance. Similarly, application traffic using a specific WAN edge link can suffer in the event of a downstream problem in the ISP&rsquo;s network or anywhere else along the path. In all these scenarios, the router will happily continue to route the affected traffic based on BGP&rsquo;s best path decision. An operator usually performs manual traffic engineering (TE) in response to signals from alerts or application owners. Of course at FB, GOOG, MSFT magnitude, this approach does not scale at all. Even when there is no network problem per se, an application should be able to potentially dictate the WAN path it wants to take.</p>
+<p>In the past, hardware vendors like Cisco have attempted to solve this problem by trying to impart intelligence to routers ( remember PFRv1 ? ), which is the opposite of what the industry decided to do ( and for good reason ) - which was to use external software control to dictate the paths application traffic should take. After all, routers need to be made more dumb, not more intelligent ! There are a few ways in which this software control can be implemented. In each case, a controller decides, based on inputs such as QOS and link utilizations, which path specific host packets should take. Hosts are then told to influence the data path for every egress packet by using some crafty techniques:</p>
+<ul>
+<li>Push MPLS labels onto every packet that identifies the egress port on the edge/WAN routers (said label being determined by the controller). Of course this requires the OS to support MPLS switching, which introduces a new moving part with its own set of bugs and challenges.</li>
+<li>Tunnel packets to the edge routers using stuff like GRE with Key extensions or specific DSCP bits (again, controller derived), which the router matches using pre-set policies and chooses a specific routing instance, VRF or outgoing interface to route the decapsulated packet to.</li>
+</ul>
+<p>The above host-induced per-packet source routing provides the ultimate granularity for routing application flows. However, the increased complexity of these solutions can make deployment and operations a nightmare. Another approach that is more suited to service provider topologies is to provide per-prefix control using techniques like <a href="https://www.juniper.net/documentation/en_US/release-independent/solutions/information-products/pathway-pages/epe-fundamentals.pdf">Egress Peer Engineering</a>.  Most of these methods introduce dependencies on vendor feature sets and control planes. In order to decouple the path influencing logic from vendor control planes, one option is to use BGP injection - where specific higher preference paths are injected by a BGP controller in order to override BGP&rsquo;s best path decisions. While I dont necessarily endorse one method over the other, (each one has its own merits and de-merits), I ended up using this method since it was the easiest to implement.</p>
+<h2 id="setting-the-stage">Setting the Stage</h2>
+<p>Our POC design will attempt to steer portions of traffic away from overloaded links on an edge router. While this does not provide complete application-driven edge control, it is a simplistic way of improving application performance by routing around overloaded links. We can think of the design as a simple closed-loop control system where a controller automatically regulates the output based on certain inputs, control variables and feedback from the output itself.</p>
+<p>
+  <figure>
+    <img src="/img/control.svg" alt="Controller">
+    <center><figcaption>Closed-loop control system</figcaption></center>
+  </figure>
+
+</p>
+<p>In our case, the inputs to the system are provided as below:</p>
+<ul>
+<li>Link utilizations (bps) that allow the controller to determine overloaded links</li>
+<li>Per-prefix utilizations (bps) that allow the controller to determine which prefixes to override</li>
+<li>Interface data either via SNMP or some other external source of truth</li>
+<li>Static configuration on interface high and low watermarks, thresholds etc.</li>
+</ul>
+<p>Using these inputs, the controller determines if any prefixes need to be detoured and automatically regulates the ouput link utilizations by keeping them within the configured thresholds. The resulting interface utilization data is fed back into the controller so it can continue to make up-to-date decisions.</p>
+<h2 id="network-topology">Network Topology</h2>
+<p>The virtualized network we will use for the demo will be a simple one comprising of two virtual devices connected back to back via two links. Each uplink on the edge switch serves to emulate an edge BGP peer. Normal BGP policy would dictate that ISP A (which could be a settlement-free peer) be preferred for all traffic over ISP B (or a transit provider) for various reasons (cost, business policy etc.). I chose a Cumulus VX switch running Cumulus Linux 4.12 as the edge device ( more on this choice later ). The peering device could be anything since its mostly passive. The only requirement is to be a BGP speaker. In this case, I used a Juniper vQFX10k. A couple of servers connect directly to the Cumulus VX for traffic generation and hosting the controller. I used Virtualbox coupled with Vagrant to build this setup. Although simple, this topology emulates a network edge where a an edge device peers with multiple WAN providers, such as a Bi-Lateral peer and a Transit provider.</p>
+<p>
+  <figure>
+    <img src="/img/network.svg" alt="Test bed topology">
+    <center><figcaption>Network Topology</figcaption></center>
+  </figure>
+
+</p>
+<p>All links are configured as 1Gbps by default. BGP is configured on the VQFX to announce several random prefixes downstream. Although the same prefix is received on the Cumulus over both links, BGP is configured to prefer the path via AS 33010 (using higher LocalPref) at all times for all prefixes. This will cause all traffic to those prefixes to always egress via the <code>swp1</code> interface. In order to generate actual traffic, we can use a simple tool like <code>iperf</code> on one of the two servers. The next step is to start collecting data from the device.</p>
+<h2 id="data-collection-via-sflow">Data Collection via Sflow</h2>
+<p>As mentioned above, we need a way to measure and collect interface utilizations and per-prefix utilizations to provide as input to our controller. We can collect link utilizations the old fashioned way - polling interface counters via SNMP or other mechanism. Per-prefix utilization is usually gleaned from flow data collected via Netflow or IPFIX. However, there is a (relatively) new star player in the traffic analytics field - Sflow. I wont go too deep into the differences between Netflow and Sflow but in a nutshell, Sflow is a protocol developed by InMon Corporation (RFC 3176) that has existed since the early 2000s and has recently gained quite some industry traction. It works by sampling 1 in N packets traversing an interface and exporting the packet header out to an Sflow collector. This is in contrast to Netflow which also samples packets but groups them into &ldquo;flows&rdquo; (src/dst ip, port) and exports them out as &ldquo;flow records&rdquo; instead. Sflow is relatively light-weight, simple and defines extensions that allow decorating each sampled packet with metadata such as switching information (vlans etc), routing information (bgp route, attribute and next-hop info) and others.</p>
+<p>
+  <figure>
+    <img src="/img/rtaImage.jpeg" alt="Sflow packet">
+    <center><figcaption>Wireshark Capture of an Sflow Datagram</figcaption></center>
+  </figure>
+
+</p>
+<p>Another interesting aspect of Sflow is that it can also be configured to sample and export interface counters such as utilization and error counters , providing a light-weight ( usually chipset implemented ) alternative to traffic monitoring via SNMP polling, GRPC streaming and the likes. Because of this added functionality, it made the most sense for me to use Sflow export so I could use a single Sflow collector for both interface as well as per-prefix utilization.</p>
+<p>Assuming a sample rate of 1 in <code>N</code>, an average packet size of <code>B</code> bytes, sampling interval of <code>T</code> seconds and if the number of samples in the interval T is <code>n</code>, the statistical rate of traffic can be found using:</p>
+<pre><code>bps =  (n * N * B * 8) / T
+</code></pre><p>All of this information is exported as part of the Sflow packet, along with the packet header itself which provides source/destination IP info. Also, a router can be configured to send the route information for a given destination ( specifically the next hop IP, the source and destination prefix mask lengths ) via the Sflow Router extension.Thus by grouping the destination IPs of the reported samples into prefixes ( based on route prefix-length obtained from the Router extension) and applying the above formula, the bps of each prefix can be determined over the given sampling interval.</p>
+<p>Sflow also reports interface octet counts at periodic intervals. Interface utlization can be calculated simply by storing the rate of change of octets over the reporting interval and then computing the average rate over time.</p>
+<p>To build the Sflow collector, I used the <a href="https://github.com/google/gopacket">GoPacket library</a> which provides packet parsing functionality for many different protocols and payloads. Interestingly, I ended up discovering a bug in the Sflow parsing code that I had to patch up locally to get things working :)</p>
+<p>Besides just traffic statistics we would also need additional data about the device and all its interfaces ( such as names, SNMP ifIndex, speed etc.). While this would be normally fetched from a Source of Truth or an existing collection tool, in my case, it was sufficient to provide this information via a configuration file to the controller. Using a configuration file also allows for manipulating data to facilicate testing. For example, because I ran the whole testbed on my laptop, I could&rsquo;nt push much traffic through the VMs without frying out my CPU; certainly not to the 1Gbps speeds the interfaces support. By using a configuration file, I can override the interface speeds to be, say, 100Mbps instead of 1 Gbps thereby allowing me to test the controller using much lower traffic rates.</p>
+<h2 id="choosing-a-router-vm">Choosing a Router VM</h2>
+<p>When evaluating a vendor image to use as the device under test, the Sflow functionality was the main factor that drove my decision. I tried out a host of different vendor images until I finally settled on Cumulus VX:</p>
+<ul>
+<li>Arista vEOS (lab) : Supports Sflow functionalty only on L2 interfaces. It also would not export counters and samples accurately and constantly under-reported the values.</li>
+<li>Juniper vQFX : Requires a separate PFE image to get proper forwarding functionality. Also, interface counters are not properly reflected on the <code>xe</code> interfaces.</li>
+<li>Cisco NxOS-V : This one was a heavyweight. It seemed to support full functionality but was very resource intensive. Push only a few MBs of traffic and my 8 core i9 laptop would struggle to keep up.</li>
+<li>Cumulus VX : This image, in conjunction with the <a href="https://github.com/sflow/host-sflow">host sflow</a> daemon, was the only one that seemed to report accurate interface counters as well as sflow samples, albeit missing some functionality like router exension export. To get around this limitation, I had to assume an appropriate prefix mask as a default.</li>
+</ul>
+<h3 id="a-quick-note-on-host-sflow">A quick note on host sflow</h3>
+<p>The Cumulus VX image comes pre-packaged with the host sflow daemon. This tool, apart from just exporting flow information and interface statistics, can also be configured to export a &ldquo;host&rdquo; of other host metrics (no pun intended) such as metrics for virtualized components, cpu/mem info and even application specific metrics. It supports a wide variety of OSs and platforms, including Arista EOS, SONiC and OpenSwitch.
+By default, sampling only seems to work in the ingress direction on all interfaces. In order to get egress flow sampling working on the Cumulus VX, I had to use <code>nflog</code> based sampling combined with <code>iptables</code> post-routing rules. For example to configure egress packet sampling at a rate of 1 in 1000:</p>
+<pre><code>MOD_STATISTIC=&quot;-m statistic --mode random --probability 0.001&quot;
+NFLOG_CONFIG=&quot;--nflog-group 5 --nflog-prefix SFLOW&quot;
+
+sudo iptables -t mangle -I POSTROUTING -j NFLOG $MOD_STATISTIC $NFLOG_CONFIG
+</code></pre><p>The host sflow daemon can then be configured to plug into nflog group 5 to receive the packet samples from the kernel:</p>
+<pre><code>sflow {
+  collector { ip = 10.1.4.100 }
+  nflog { group=5 probability=0.001 }
+}
+</code></pre><h2 id="bgp-listenerinjector">BGP Listener/Injector</h2>
+<p>The next major component that the collector requires is a BGP Injector. This needs to be a programmable BGP speaker that can peer with the edge device and expose an API that can send/withdraw routes on demand as well as provide a route query interface. In order to steer traffic from an overloaded interface to a non overloaded one, we need to know all possible paths for a given prefix and not just the best bath. When such information is needed, the BGP Monitoring Protocol (BMP) is typically used. However, in order to avoid setting up a BMP speaker in addition to a BGP injector, we can accomplish both tasks by configuring the edge router with the BGP additional-paths (Add-Paths) funcionality.</p>
+<p>When it comes to implementing a programmable BGP interface, my tool of choice is GoBGP. Its GRPC based API makes it easy to add/delete routes on the fly and to configure advanced BGP functionality ( although it does take some getting used to, since the documentation is not super explicit ). You can also use GoBGP as a library, which is what our controller will do as well. The BGP implementation will serve two purposes:</p>
+<ul>
+<li>Provide info on all the available paths for a given prefix (via Add-Paths configured on the router) so that the controller is able to decide which alternate paths to use for a given prefix.</li>
+<li>Inject more specific prefixes of a higher preference to the router ( based on the above decision ) pointing to alternate interfaces so that a portion of traffic belonging to that prefix is detoured to alternate paths.</li>
+</ul>
+<p>I opted to integrate GoBGP into the controller code because this allows greater control over manipulating the BGP daemon. Here is what the GoBGP config would look like for our use case, if we were to run this as a standalone daemon instead. You can see how we specify the conditional route announcement policies on a per-neighbor basis:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-toml" data-lang="toml">[global.config]
+    as = <span style="color:#bd93f9">1</span>
+    router-id = <span style="color:#f1fa8c">&#34;1.1.1.1&#34;</span>
+
+    [global.apply-policy.config]
+        default-import-policy = <span style="color:#f1fa8c">&#34;accept-route&#34;</span>
+        export-policy-list = [<span style="color:#f1fa8c">&#34;route-announce&#34;</span>]
+        default-export-policy = <span style="color:#f1fa8c">&#34;accept-route&#34;</span>
+
+[[neighbors]]
+    [neighbors.config]
+        peer-as = <span style="color:#bd93f9">2</span>
+        neighbor-address = <span style="color:#f1fa8c">&#34;192.168.10.2&#34;</span>
+
+[[defined-sets.neighbor-sets]]
+   neighbor-set-name = <span style="color:#f1fa8c">&#34;r1&#34;</span>
+   neighbor-info-list = [<span style="color:#f1fa8c">&#34;192.168.10.2&#34;</span>]
+[[defined-sets.bgp-defined-sets.community-sets]]
+    community-set-name = <span style="color:#f1fa8c">&#34;announce&#34;</span>
+    community-list = [<span style="color:#f1fa8c">&#34;100:100&#34;</span>]
+[[policy-definitions]]
+    name = <span style="color:#f1fa8c">&#34;route-announce&#34;</span>
+    [[policy-definitions.statements]]
+        [policy-definitions.statements.conditions.match-neighbor-set]
+            neighbor-set = <span style="color:#f1fa8c">&#34;r1&#34;</span>
+            match-set-options = <span style="color:#f1fa8c">&#34;all&#34;</span>
+        [policy-definitions.statements.conditions.bgp-conditions.match-community-set]
+            community-set = <span style="color:#f1fa8c">&#34;announce-to-r1&#34;</span>
+            match-set-options = <span style="color:#f1fa8c">&#34;all&#34;</span>
+</code></pre></div><h2 id="controller">Controller</h2>
+<p>Finally, we have the controller that is the brains of the system. The controller uses data from the Sflow collector to determine overloaded interfaces, figures out prefixes that could be detoured and instructs the BGP daemon to inject alternate paths to detour traffic off the overloaded links. Because this is a POC, we will keep the controller fairly simple:</p>
+<ul>
+<li>A configuration file specifies, among other things:
+<ul>
+<li>A list of interfaces to monitor</li>
+<li>A list of alternate interfaces to detour traffic to</li>
+<li>High and low watermarks ( in percentages ) when traffic detours should be added and removed.</li>
+<li>Stuff that will normally be fetched via other means (interface IPs, SNMP index, speed)</li>
+</ul>
+</li>
+<li>Periodically monitor the interfaces specified in a configuration file for traffic rates.</li>
+<li>If traffic percentage goes above the high watermark, trigger a traffic detour.
+<ul>
+<li>Query the SFlow collector for the top 5 prefixes sending traffic across the overloaded interface</li>
+<li>It is possible that a given prefix takes up a large portion of traffic across an interface. If we attempt to detour all traffic for such a prefix, we may end up overloading the alternate link instead ! Thus we will implement logic that will split a &ldquo;large&rdquo; prefix into smaller subnets (e.g /24 into two /25s) recursively until we find a prefix &ldquo;small&rdquo; enough to detour. This per-prefix threshold will be determined by a configurable parameter.</li>
+<li>Query the BGP daemon for all available paths for the candidate prefixes.</li>
+<li>Instruct the BGP daemon to inject the candidate prefixes with higher preferences onto alternate paths one by one until the interface utilization goes below the low watermark.</li>
+</ul>
+</li>
+<li>Keep a track of all overrides added for an interface. If the utilization of a monitored interface goes below the low watermark, delete the previous detours ( i.e withdraw the overriden prefixes ) while ensuring that traffic still stays below the high watermark.</li>
+</ul>
+<p>
+  <figure>
+    <img src="/img/ctrl-logic.svg" alt="Controller Logic">
+    <center><figcaption>Simplified Controller Logic</figcaption></center>
+  </figure>
+
+</p>
+<p><br></br>
+With the above components hashed out, our high level controller design can be now visualized as follows.</p>
+<p>
+  <figure>
+    <img src="/img/ctrl.svg" alt="Controller Diagram">
+    <center><figcaption>High Level Controller Design</figcaption></center>
+  </figure>
+
+</p>
+<p>Note that in practice, it makes sense to deploy each component as its own individual service. Thus the Sflow collector, BGP daemon and the actual controller would be three separate applications. The advantage of this is that each component could be individually iterated for bug fixes, feature adds etc. without impacting the others. For example, the controller could be taken down for an upgrade while the BGP daemon still continues to announce detour prefixes to the routers. Of course nothing is free - the disadvantage of this approach is there would now be a need to introduce idempotency ( either at the controller or the BGP daemon or both ) by some other means thereby making the design of these components more complex.</p>
+<p>Once again, to keep things simple, I opted to integrate all three controller components into the same binary. Even though this means that any application restart would result in interfaces getting overloaded again ( since the injected BGP routes are also lost ), it allows us to keep the code simple - and the detours would be placed back again once the application starts back up. Another controller choice is one of stateless vs stateful design. This is usually a choice that involves some tradeoff - usually one of increased code complexity to achieve more operational simplicity. In my opinion, maintaining some state is ok if it allows you to keep the code simple and maintainable, so long as fixtures exist to expose operational state for debugging purposes. Thus our controller maintains its override decisions in memory and exposes a REST API that provides insight into that state.</p>
+<p>With that said, the full controller code, along with the Vagrant demo environment is found here : <a href="https://github.com/mayuresh82/edge-traffic-controller">https://github.com/mayuresh82/edge-traffic-controller</a> . In part 2 of this series, we will see the controller in action by simulating actual traffic flows and looking into its operation in more detail !</p>
+<h3 id="references">References</h3>
+<ul>
+<li>Facebook Edge Fabric: <a href="https://research.fb.com/wp-content/uploads/2017/08/sigcomm17-final177-2billion.pdf">https://research.fb.com/wp-content/uploads/2017/08/sigcomm17-final177-2billion.pdf</a></li>
+<li>Host Sflow: <a href="https://sflow.net/about.php">https://sflow.net/about.php</a></li>
+</ul>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2020/12/25/nornir_inventories" data-toggle="tooltip" data-placement="top" title="Building Dynamic Inventories in Nornir">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "mayuresh82-gitub-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="NRE-Bytes" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:nre-bytes@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+
+                    
+
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/mayuresh82">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/mayuresh-gaitonde-3232001/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://stackoverflow.com/users/11501174/mayuresh-gaitonde">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-stack-overflow fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+            
+                    
+                    
+                    
+            
+            
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; NRE-Bytes 2021
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-185781460-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>

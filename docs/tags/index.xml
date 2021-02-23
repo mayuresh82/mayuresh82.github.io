@@ -6,10 +6,46 @@
     <description>Recent content in Tags on NRE-Bytes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 21 Dec 2020 15:05:46 -0800</lastBuildDate>
+    <lastBuildDate>Tue, 23 Feb 2021 09:00:00 -0800</lastBuildDate>
     
 	<atom:link href="https://mayuresh82.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>bgp</title>
+      <link>https://mayuresh82.github.io/tags/bgp/</link>
+      <pubDate>Tue, 23 Feb 2021 09:00:00 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/tags/bgp/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>controller</title>
+      <link>https://mayuresh82.github.io/tags/controller/</link>
+      <pubDate>Tue, 23 Feb 2021 09:00:00 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/tags/controller/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>SDN</title>
+      <link>https://mayuresh82.github.io/tags/sdn/</link>
+      <pubDate>Tue, 23 Feb 2021 09:00:00 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/tags/sdn/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>sflow</title>
+      <link>https://mayuresh82.github.io/tags/sflow/</link>
+      <pubDate>Tue, 23 Feb 2021 09:00:00 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/tags/sflow/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>dynamic</title>

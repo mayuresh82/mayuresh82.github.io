@@ -3,22 +3,62 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://mayuresh82.github.io/tags/bgp/</loc>
+    <lastmod>2021-02-23T09:00:00-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/2021/02/23/edge-controller-part1/</loc>
+    <lastmod>2021-02-23T09:00:00-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/categories/</loc>
+    <lastmod>2021-02-23T09:00:00-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/tags/controller/</loc>
+    <lastmod>2021-02-23T09:00:00-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/categories/general/</loc>
+    <lastmod>2021-02-23T09:00:00-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/</loc>
+    <lastmod>2021-02-23T09:00:00-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/post/</loc>
+    <lastmod>2021-02-23T09:00:00-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/tags/sdn/</loc>
+    <lastmod>2021-02-23T09:00:00-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/tags/sflow/</loc>
+    <lastmod>2021-02-23T09:00:00-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mayuresh82.github.io/tags/</loc>
+    <lastmod>2021-02-23T09:00:00-08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://mayuresh82.github.io/2020/12/25/nornir_inventories/</loc>
     <lastmod>2020-12-21T15:05:46-08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://mayuresh82.github.io/categories/</loc>
-    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://mayuresh82.github.io/tags/dynamic/</loc>
-    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://mayuresh82.github.io/categories/general/</loc>
     <lastmod>2020-12-21T15:05:46-08:00</lastmod>
   </url>
   
@@ -34,21 +74,6 @@
   
   <url>
     <loc>https://mayuresh82.github.io/tags/nornir/</loc>
-    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://mayuresh82.github.io/</loc>
-    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://mayuresh82.github.io/post/</loc>
-    <lastmod>2020-12-21T15:05:46-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://mayuresh82.github.io/tags/</loc>
     <lastmod>2020-12-21T15:05:46-08:00</lastmod>
   </url>
   
