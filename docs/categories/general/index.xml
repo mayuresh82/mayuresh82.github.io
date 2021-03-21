@@ -6,10 +6,16 @@
     <description>Recent content in General on NRE-Bytes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 23 Feb 2021 09:00:00 -0800</lastBuildDate>
-    
-	<atom:link href="https://mayuresh82.github.io/categories/general/index.xml" rel="self" type="application/rss+xml" />
-    
+    <lastBuildDate>Tue, 23 Mar 2021 09:00:00 -0800</lastBuildDate><atom:link href="https://mayuresh82.github.io/categories/general/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Building an Edge Traffic Controller - Part 2</title>
+      <link>https://mayuresh82.github.io/2021/03/23/edge-controller-part2/</link>
+      <pubDate>Tue, 23 Mar 2021 09:00:00 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/2021/03/23/edge-controller-part2/</guid>
+      <description>In Part 1 of this series, we ran through the technical details of what it would take to build an edge traffic controller to steer traffic away from overloaded edge links. In this blog, I will try to demonstrate the controller in action by simulating traffic flows using our virtualized topology. We will also look into other real world considerations such as operational monitoring and metrics.
+Initial Setup To recap, this is what our topology looks like:</description>
+    </item>
     
     <item>
       <title>Building an Edge Traffic Controller - Part 1</title>
