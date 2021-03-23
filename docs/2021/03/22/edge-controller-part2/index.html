@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="NRE-Bytes">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://mayuresh82.github.io/img/banner-main.jpg">
+    <meta property="twitter:image" content="https://mayuresh82.github.io/img/banner-main.jpg" />
+    
+
+    
+    <meta name="title" content="Building an Edge Traffic Controller - Part 2" />
+    <meta property="og:title" content="Building an Edge Traffic Controller - Part 2" />
+    <meta property="twitter:title" content="Building an Edge Traffic Controller - Part 2" />
+    
+
+    
+    <meta name="description" content="Network Automation Blog with a focus on real world problems">
+    <meta property="og:description" content="Network Automation Blog with a focus on real world problems" />
+    <meta property="twitter:description" content="Network Automation Blog with a focus on real world problems" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="network, automation, build, anycast, scale, reliability, NRE, framework">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Building an Edge Traffic Controller - Part 2-mayuresh82 | Network Reliability Engineering</title>
+
+    <link rel="canonical" href="/2021/03/22/edge-controller-part2">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">NRE-Bytes</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/general">general</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/infra">infra</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/epe-pt1.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/sdn" title="SDN">
+                            SDN
+                        </a>
+                        
+                        <a class="tag" href="/tags/sflow" title="sflow">
+                            sflow
+                        </a>
+                        
+                        <a class="tag" href="/tags/controller" title="controller">
+                            controller
+                        </a>
+                        
+                        <a class="tag" href="/tags/bgp" title="bgp">
+                            bgp
+                        </a>
+                        
+                    </div>
+                    <h1 class="heading">Building an Edge Traffic Controller - Part 2</h1>
+                    <h2 class="subheading">Practical demo of using the controller to detour traffic from overloaded interfaces</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                            mayuresh82
+                         
+                        on 
+                        March 22, 2021
+                        
+                        
+                        
+						- 14 minute read
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#initial-setup">Initial Setup</a>
+      <ul>
+        <li><a href="#bgp-setup">BGP setup</a></li>
+        <li><a href="#host-sflow-setup">Host sflow setup</a></li>
+        <li><a href="#controller-setup">Controller setup</a></li>
+        <li><a href="#traffic-generation">Traffic generation</a></li>
+        <li><a href="#monitoring">Monitoring</a></li>
+        <li><a href="#prefix-splitting">Prefix Splitting</a></li>
+      </ul>
+    </li>
+    <li><a href="#final-thoughts">Final thoughts</a></li>
+  </ul>
+</nav>
+                
+                <p>In <a href="https://mayuresh82.github.io/2021/02/23/edge-controller-part1/">Part 1</a> of this series, we ran through the technical details of what it would take to build an edge traffic controller to steer traffic away from overloaded edge links. In this blog, I will try to demonstrate the controller in action by simulating traffic flows using our virtualized topology. We will also look into other real world considerations such as operational monitoring and metrics.</p>
+<h1 id="initial-setup">Initial Setup</h1>
+<p>To recap, this is what our topology looks like:</p>
+<p>
+  <figure>
+    <img src="/img/network.svg" alt="Test bed topology">
+    <center><figcaption>Network Topology</figcaption></center>
+  </figure>
+
+</p>
+<h2 id="bgp-setup">BGP setup</h2>
+<p>Recall that the Juniper vQFX is setup as a peer router in our topology and is configured to announce several random prefixes such as 1.0.0.0/24, 1.0.1.0/24 etc to the downstream Cumulus VX. These prefixes will be installed as sink routes with a <code>discard</code> ( or <code>null0</code>) next hop which means the UDP traffic to these destinations is simply going to get dropped. The vQFX will be configured to announce the same routes across both BGP sessions to the Cumulux which will then be configured to prefer the route over the &ldquo;peering&rdquo; link as opposed to the &ldquo;transit&rdquo; link. This device will also establish an iBGP peering session with the controller and will announce additional all paths to it (while retaining the external next hops). Below is a BGP configuration snippet from the Cumulux VX:</p>
+<pre><code>router bgp 12121
+  bgp router-id 50.50.50.50
+  neighbor 10.1.4.100 remote-as 12121
+  neighbor 10.1.4.100 description CONTROLLER
+  neighbor 172.16.0.0 remote-as 33010
+  neighbor 172.16.0.0 description PEER
+  neighbor 172.16.0.2 remote-as 42428
+  neighbor 172.16.0.2 description TRANSIT
+  neighbor 172.16.0.0 timers 0 0
+  neighbor 172.16.0.2 timers 0 0
+
+  address-family ipv4 unicast
+    network 10.1.3.0/24
+    network 10.1.4.0/24
+    neighbor 10.1.4.100 addpath-tx-all-paths
+    neighbor 10.1.4.100 route-map ALL out
+    neighbor 172.16.0.0 soft-reconfiguration inbound
+    neighbor 172.16.0.0 route-map PEER_IN in
+    neighbor 172.16.0.2 soft-reconfiguration inbound
+
+route-map PEER_IN permit 10
+  set local-preference 200
+
+route-map ALL permit 10
+</code></pre><p>Below is a snippet from the route table of the Cumulus VX, which shows the same route being announced from both neighbors, while the route to the peer being preferred:</p>
+<pre><code>vagrant@rtr1:mgmt:~$ net show bgp
+show bgp ipv4 unicast
+=====================
+BGP table version is 239, local router ID is 50.50.50.50, vrf id 0
+Default local pref 100, local AS 12121
+Status codes:  s suppressed, d damped, h history, * valid, &gt; best, = multipath,
+               i internal, r RIB-failure, S Stale, R Removed
+Nexthop codes: @NNN nexthop's vrf id, &lt; announce-nh-self
+Origin codes:  i - IGP, e - EGP, ? - incomplete
+
+   Network          Next Hop            Metric LocPrf Weight Path
+*  1.0.0.0/24       172.16.0.2                             0 42428 i
+*&gt;                  172.16.0.0                    200      0 33010 i
+*  1.0.1.0/24       172.16.0.2                             0 42428 i
+*&gt;                  172.16.0.0                    200      0 33010 i
+*  1.0.2.0/24       172.16.0.2                             0 42428 i
+*&gt;                  172.16.0.0                    200      0 33010 i
+*  1.0.3.0/24       172.16.0.2                             0 42428 i
+*&gt;                  172.16.0.0                    200      0 33010 i
+*  1.0.4.0/24       172.16.0.2                             0 42428 i
+*&gt;                  172.16.0.0                    200      0 33010 i
+</code></pre><h2 id="host-sflow-setup">Host sflow setup</h2>
+<p>In order to correctly sample egress packets on the Cumulus VX, we need to enable <code>nflog</code> sampling at a rate of 1 in 1000 packets using <code>iptables</code> post-routing rules as follows:</p>
+<pre><code>MOD_STATISTIC=&quot;-m statistic --mode random --probability 0.001&quot;
+NFLOG_CONFIG=&quot;--nflog-group 5 --nflog-prefix SFLOW&quot;
+
+sudo iptables -t mangle -I POSTROUTING -j NFLOG $MOD_STATISTIC $NFLOG_CONFIG
+sudo iptables -t mangle -I INPUT -j NFLOG $MOD_STATISTIC $NFLOG_CONFIG
+</code></pre><p>The host sflow daemon on the Cumulus VX can then be configured to export flows to the controller. Below is the relevant host-sflow daemon config:</p>
+<pre><code>sflow {
+  agent = swp4
+  polling = 10
+  sampling = 1000
+  collector { ip=10.1.4.100 udpport=6343 }
+  nflog { group = 5  probability = 0.001 }
+}
+</code></pre><p>This hsflowd config specifies flow export to agent IP 10.1.4.100 using a sampling rate of 1 in 1000 packets. It is set to poll and export interface counters every 10 seconds using the address of interface <code>swp4</code> as the source ip. We also configure the daemon to use <code>nflog</code> group 5 (defined above) with a probability that matches the sampling rate.</p>
+<p>Finally, we can start the hsflow daemon using:</p>
+<pre><code>sudo service hsflowd start
+</code></pre><h2 id="controller-setup">Controller setup</h2>
+<p>The controller needs to be supplied with a config file that specifies the device and interfaces to be monitored, as well as the potential detour candidate links. For the demo, we will also specify interface parameters such as link speed, SNMP index etc using the same config file. The following is the YAML config we will use:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#ff79c6">sflow</span>:
+  <span style="color:#ff79c6">listen_port</span>: <span style="color:#bd93f9">6343</span>
+  <span style="color:#ff79c6">counter_poll_interval</span>: 10s
+
+<span style="color:#ff79c6">bgp</span>:
+  <span style="color:#ff79c6">local_as</span>: <span style="color:#bd93f9">12121</span>
+  <span style="color:#ff79c6">local_ip</span>: <span style="color:#bd93f9">10.1.4.100</span>
+
+<span style="color:#ff79c6">devices</span>:
+  - <span style="color:#ff79c6">name</span>: rtr1
+    <span style="color:#ff79c6">ip</span>: <span style="color:#bd93f9">10.1.4.1</span>
+    <span style="color:#ff79c6">asn</span>: <span style="color:#bd93f9">12121</span> 
+    <span style="color:#ff79c6">bgp_community</span>: <span style="color:#bd93f9">100</span>:<span style="color:#bd93f9">100</span>
+    <span style="color:#ff79c6">interfaces</span>:
+      - <span style="color:#ff79c6">name</span>: swp1
+        <span style="color:#ff79c6">ifindex</span>: <span style="color:#bd93f9">3</span>
+        <span style="color:#ff79c6">address</span>: <span style="color:#bd93f9">172.16.0.1</span>/31
+        <span style="color:#ff79c6">speed</span>: <span style="color:#bd93f9">100000000</span>
+        <span style="color:#ff79c6">high_watermark</span>: <span style="color:#bd93f9">80</span>
+        <span style="color:#ff79c6">low_watermark</span>: <span style="color:#bd93f9">65</span>
+        <span style="color:#ff79c6">per_prefix_threshold</span>: <span style="color:#bd93f9">30000000</span>
+        <span style="color:#6272a4">#dry_run: true</span>
+        <span style="color:#ff79c6">monitor</span>: <span style="color:#ff79c6">true</span>
+      - <span style="color:#ff79c6">name</span>: swp2
+        <span style="color:#ff79c6">ifindex</span>: <span style="color:#bd93f9">4</span>
+        <span style="color:#ff79c6">address</span>: <span style="color:#bd93f9">172.16.0.3</span>/31
+        <span style="color:#ff79c6">speed</span>: <span style="color:#bd93f9">100000000</span>
+        <span style="color:#ff79c6">high_watermark</span>: <span style="color:#bd93f9">80</span>
+        <span style="color:#ff79c6">low_watermark</span>: <span style="color:#bd93f9">60</span>
+</code></pre></div><p>First we specify the sflow port and the expected counter poll interval. Next comes the BGP config for the embedded GoBGP server inside the controller. At the device level, we specify the BGP parameters to use. Each device is configured with a special BGP community, which is used by GoBGP to perform selective route announcement (via peer policies) to that specific neighbor. Also note that the device ASN is the same as our controller ASN, which means we are using iBGP. This causes the router to announce prefixes with the original external next hops retained (i.e no next-hop-self). This is a crucial part of controller operation - since the controller needs visibility into external next hops in order to make detour routing decisions.</p>
+<p>Interface <code>swp1</code> is the interface connecting to our peering partner , which is AS 33010. Interface <code>swp2</code> on the other hand connects to or transit provider, which is AS 42428. The monitored interface also specifies three noteworthy parameters:</p>
+<ul>
+<li>high_watermark: the utilzation percentage above which detours should be triggered</li>
+<li>low_watermark: the utilization percentage below which detours can be removed</li>
+<li>per_prefix_threshold: the per-prefix utilization in bps above which prefixes with high traffic rates need to be split into smaller prefixes. This is set to 30Mbps.
+The controller is thus configured to maintain the utilization between 60% to 80%. Also note the dry-run option  which is set to False. IF this is set to True, the controller will simply log its decisions instead of actually applying the detours. Finally, we cap the interface speeds to 100Mbps in order to facilitate testing with reasonable traffic rates.</li>
+</ul>
+<p>We can fire up the controller on <code>srv2</code> and watch BGP come up with the router (rtr1):</p>
+<pre><code>vagrant@server2:~$ sudo ./controller -v=4 -logtostderr -config config.yaml
+I0321 06:09:40.712404   15107 controller.go:90] Starting GoBGP Server
+I0321 06:09:40.713107   15107 controller.go:100] Starting Sflow server on :6343
+INFO[0000] Add a peer configuration for:10.1.4.1         Topic=Peer
+I0321 06:09:40.714226   15107 controller.go:187] Starting http server on :8080
+I0321 06:09:40.714315   15107 controller.go:223] Starting monitoring for Interface swp1 on rtr1
+INFO[0006] Peer Up                                       Key=10.1.4.1 State=BGP_FSM_OPENCONFIRM Topic=Peer
+I0321 06:09:47.048734   15107 controller.go:107] Peer rtr1 is now up !
+</code></pre><p>The controller is now ready to receive sflow samples and start monitoring the interface <code>swp1</code>.</p>
+<h2 id="traffic-generation">Traffic generation</h2>
+<p>We can use <code>iperf</code> installed on one of the servers attached to our Cumulus VM as a traffic generator. Iperf allows us to generate simple UDP streams with a given throughput and for a given duration to specific destination IPs. This is called <code>client</code> mode. Because our main goal here is to simply create some traffic load over our edge links without worrying about what happens to these streams, we dont really care about setting up iperf in server mode on the receiving end. In order to facilitate testing, I&rsquo;ll be using a short Python script that can spin up subprocesses running iperf to a given destination at a given rate of traffic, in parallel.</p>
+<h2 id="monitoring">Monitoring</h2>
+<p>In order to better monitor the effects of the controller on the edge interfaces, the controller offers a REST API that exposes useful operational information such as:</p>
+<ul>
+<li>utilization of interfaces being monitored</li>
+<li>top-N prefixes in terms of interface utilization</li>
+<li>current overrides that are in effect</li>
+<li>BGP paths learnt from the routers</li>
+</ul>
+<p>Providing above APIs is a great way to ensure visibity into the operational state of the controller. Taking this a step further, the controller also exposes a <a href="prometheus.io">Prometheus</a> scrape endpoint that serves interface traffic statistics as well as per-prefix statistics obtained from Sflow samples. For the purposes of this demo, this can help visualize the effects of controller actions. We also stand up a local Grafana instance to create some lovely dashboards to go with this.</p>
+<p>To start generating some traffic, lets go ahead and start up three UDP streams from <code>srv1</code> to destinations 1.0.0.1, 2.0.0.1 and 3.0.0.1, each sending 20Mbps. Note that our HWM is set to 80Mbps and the LWM is set to 65% utilization for interface <code>swp1</code>. Watching the controller logs, we can see it monitoring the traffic utilizations every minute:</p>
+<pre><code>I0321 06:10:40.714529   15107 controller.go:240] rtr1/swp1 (Util: 45446361, speed: 100000000) is at 45% utilization
+I0321 06:10:40.714785   15107 controller.go:246] Low WM reached for rtr1/swp1
+I0321 06:10:40.714941   15107 controller.go:223] Starting monitoring for Interface swp1 on rtr1
+I0321 06:11:40.715295   15107 controller.go:240] rtr1/swp1 (Util: 55628467, speed: 100000000) is at 55% utilization
+I0321 06:11:40.715491   15107 controller.go:246] Low WM reached for rtr1/swp1
+I0321 06:11:40.715641   15107 controller.go:223] Starting monitoring for Interface swp1 on rtr1
+I0321 06:12:40.755906   15107 controller.go:240] rtr1/swp1 (Util: 65814520, speed: 100000000) is at 65% utilization
+I0321 06:12:40.755917   15107 controller.go:246] Low WM reached for rtr1/swp1
+I0321 06:12:40.755923   15107 controller.go:223] Starting monitoring for Interface swp1 on rtr1
+I0321 06:13:40.756138   15107 controller.go:240] rtr1/swp1 (Util: 65806368, speed: 100000000) is at 65% utilization
+I0321 06:13:40.756362   15107 controller.go:246] Low WM reached for rtr1/swp1
+I0321 06:13:40.756674   15107 controller.go:223] Starting monitoring for Interface swp1 on rtr1
+</code></pre><p>Even though we ask iperf to send 20Mbps streams, the actual measured traffic rate includes header overhead and as a result, the interface utilization settles at 65%.</p>
+<p>After waiting a few minutes for counters to catch up and flow samples to populate, we start a fourth stream; this time of 25Mbps sending traffic to 4.0.0.1. A few minutes later, the utilization on interface <code>swp1</code> hits the HWM and we can see the controller override in action:</p>
+<pre><code>I0321 06:16:40.917430   15107 controller.go:240] rtr1/swp1 (Util: 82609935, speed: 100000000) is at 82% utilization
+I0321 06:16:40.923359   15107 controller.go:294] Final Prefixes: [[{4.0.0.0/24 29107200}] [{2.0.0.0/24 21830400}] [{1.0.0.0/24 21628266}] [{3.0.0.0/24 19404800}]]
+I0321 06:16:40.923414   15107 controller.go:302] Will detour Prefix: {4.0.0.0/24 29107200}
+I0321 06:16:40.923524   15107 controller.go:400] Adding overrides for device: rtr1, intf: swp1
+I0321 06:16:40.925620   15107 controller.go:415] Found 3 total paths for prefix 4.0.0.0/24
+I0321 06:16:40.925681   15107 controller.go:439] Detouring prefix 4.0.0.0/24 to interface swp2 (nh 172.16.0.2)
+I0321 06:16:40.926163   15107 controller.go:315] Detouring total of 29107200 bps off interface rtr1:swp1 (util 82609935, hwm 80)
+</code></pre><p>From the logs, we can see the controller logic in action. When it measures the interface utilization to be above the HWM, it first queries the Sflow collector and gets a list of the top 5 prefixes sending traffic across the interface. It then detours those prefixes one by one until the interface utilization falls below the HWM. In this case, the topmost prefix was 4.0.0.0/24 which had a utilization of 25Mbps (actual ~29Mbps) which gets detoured to the alternate path. This happens via injection of a BGP override to rtr1 with the same route but pointing to interface swp2 (next-hop 172.16.0.2) and with a higher local preference of 500. Checking the BGP table on rtr1 shows us this route:</p>
+<pre><code>*&gt; 4.0.0.0/16       172.16.0.2                             0 42428 i
+*&gt;i4.0.0.0/24       172.16.0.2                    500      0 e
+*                   172.16.0.0                    200      0 33010 i
+*                   172.16.0.2                             0 42428 i
+*&gt; 4.0.1.0/24       172.16.0.0                    200      0 33010 i
+*                   172.16.0.2                             0 42428 i
+*&gt; 4.0.2.0/24       172.16.0.0                    200      0 33010 i
+*                   172.16.0.2                             0 42428 i
+*&gt; 4.0.3.0/24       172.16.0.0                    200      0 33010 i
+*                   172.16.0.2                             0 42428 i
+</code></pre><p>If we query the REST API in the controller, we can get all the information relevant to the current state of affairs. For one, we can see the current overrides in the controller. his includes information about the prefix being overriden along with its traffic rate as well as the injected BGP route.</p>
+<pre><code>$ curl &quot;http://localhost:8080/api/overrides/?router=rtr1&amp;interface=swp1&quot;
+{&quot;4.0.0.0/24&quot;:{&quot;Prefix&quot;:&quot;4.0.0.0/24&quot;,&quot;rate&quot;:24458133,&quot;parent_prefix&quot;:&quot;4.0.0.0/24&quot;,&quot;Route&quot;:{&quot;Prefix&quot;:&quot;4.0.0.0/24&quot;,&quot;Nh&quot;:&quot;172.16.0.2&quot;,&quot;Lp&quot;:500,&quot;as_path&quot;:[42428],&quot;Origin&quot;:1,&quot;Med&quot;:0,&quot;bgp_type&quot;:0,&quot;Communities&quot;:[&quot;100:100&quot;],&quot;mp_candidate&quot;:false},&quot;out_ifindex&quot;:4}}
+</code></pre><p>We can also query the topK prefix rates across interfaces as shown below:</p>
+<pre><code>$ curl &quot;http://localhost:8080/api/topK/?router=rtr1&amp;interface=swp1&quot;
+[{&quot;Prefix&quot;:&quot;3.0.0.0/24&quot;,&quot;RateBps&quot;:24053866},{&quot;Prefix&quot;:&quot;1.0.0.0/24&quot;,&quot;RateBps&quot;:20415466},{&quot;Prefix&quot;:&quot;2.0.0.0/24&quot;,&quot;RateBps&quot;:19404800}]
+
+$ curl &quot;http://localhost:8080/api/topK/?router=rtr1&amp;interface=swp2&quot;
+[{&quot;Prefix&quot;:&quot;4.0.0.0/24&quot;,&quot;RateBps&quot;:25873066}]
+</code></pre><p>After waiting a few minutes, we shut off the 25Mbps traffic stream destined to 4.0.0.1 which naturally causes the interface util to fall to the LWM. The controller detects this and removes the override:</p>
+<pre><code>I0321 06:22:40.958804   15107 controller.go:240] rtr1/swp1 (Util: 65814866, speed: 100000000) is at 65% utilization
+I0321 06:22:40.958839   15107 controller.go:246] Low WM reached for rtr1/swp1
+I0321 06:22:40.958860   15107 controller.go:261] Removing previous override: {4.0.0.0/24 29843056}
+I0321 06:22:40.959048   15107 controller.go:266] Adding back total 29843056 bps
+I0321 06:22:40.959066   15107 controller.go:460] Removing override: 4.0.0.0/24 -&gt; 172.16.0.2
+I0321 06:22:40.959232   15107 controller.go:223] Starting monitoring for Interface swp1 on rtr1
+</code></pre><p>The entire sequence of events above can be nicely visualized using our Grafana dashboards:</p>
+<p>
+  <figure>
+    <img src="/img/grafana-1.png" alt="Grafana charts">
+    <center><figcaption>Effects of Controller</figcaption></center>
+  </figure>
+
+</p>
+<p>The first panel shows interface utilizations and speeds. You can see at the utilization of <code>swp1</code> climbing up at 23:16 and hitting the HWM of 80Mbps. Right after at 23:17, the extra traffic spills over to the detour interface <code>swp2</code> while utilization on <code>swp1</code> gets normalized back to ~65Mbps. At 23:23, the extra traffic is removed.
+The second panel shows per-prefix utilizations. Initially, we start the three 20Mbps streams which continue on for the duration of the test. At 23:16, 25Mbps of additional traffic to 4.0.0.0/24 (over <code>swp1</code>) is introduced (the orange timeseries). A minute later, this traffic moves over to <code>swp2</code> in the form of the red timeseries. As you can imagine, visualization is a great way to capture effects of network controllers.</p>
+<h2 id="prefix-splitting">Prefix Splitting</h2>
+<p>For the second part, we will try and test the prefix-splitting functionality of the controller. In order to facilitate this, we will generate the following traffic streams from <code>srv1</code>:</p>
+<ul>
+<li>20Mbps each to hosts 1.0.0.1, 1.0.0.129 and 1.0.0.193</li>
+<li>20Mbps to host 2.0.0.1</li>
+<li>10 Mbps to host 2.0.0.129</li>
+</ul>
+<p>This gives us the following traffic distribution broken down by aggregate prefix:</p>
+<ul>
+<li>60Mbps for 1.0.0.0/24</li>
+<li>30Mbps to prefix 2.0.0.0/24</li>
+</ul>
+<p>These streams cumulatively cause the traffic to exceed the HWM. Lets check the controller logs and the override decisions being made:</p>
+<pre><code>I0321 20:29:55.215899   17691 controller.go:240] rtr1/swp1 (Util: 99181451, speed: 100000000) is at 99% utilization
+I0321 20:29:55.218543   17691 controller.go:294] Final Prefixes: [[{1.0.0.0/25 19606933} {1.0.0.128/26 23649600} {1.0.0.192/26 19000533}] [{2.0.0.0/25 23245333} {2.0.0.128/25 21723733}]]
+I0321 20:29:55.218585   17691 controller.go:302] Will detour Prefix: {1.0.0.0/25 19606933}
+I0321 20:29:55.218786   17691 controller.go:400] Adding overrides for device: rtr1, intf: swp1
+I0321 20:29:55.219900   17691 controller.go:415] Found 3 total paths for prefix 1.0.0.0/25
+I0321 20:29:55.219951   17691 controller.go:439] Detouring prefix 1.0.0.0/25 to interface swp2 (nh 172.16.0.2)
+I0321 20:29:55.220442   17691 controller.go:315] Detouring total of 19606933 bps off interface rtr1:swp1 (util 99181451, hwm 80)
+I0321 20:29:55.220479   17691 controller.go:223] Starting monitoring for Interface swp1 on rtr1
+</code></pre><pre><code>$ curl &quot;http://localhost:8080/api/overrides/?router=rtr1&amp;interface=swp1&quot;
+{&quot;1.0.0.0/25&quot;:{&quot;Prefix&quot;:&quot;1.0.0.0/25&quot;,&quot;rate&quot;:19606933,&quot;parent_prefix&quot;:&quot;1.0.0.0/24&quot;,&quot;Route&quot;:{&quot;Prefix&quot;:&quot;1.0.0.0/25&quot;,&quot;Nh&quot;:&quot;172.16.0.2&quot;,&quot;Lp&quot;:500,&quot;as_path&quot;:[42428],&quot;Origin&quot;:1,&quot;Med&quot;:0,&quot;bgp_type&quot;:0,&quot;Communities&quot;:[&quot;100:100&quot;],&quot;mp_candidate&quot;:false},&quot;out_ifindex&quot;:4}}
+
+</code></pre><p>Since the top prefix in terms of traffic is 1.0.0.0/24 with a cumulative rate of 60Mbps, and our per-prefix threshold is set to 30Mbps, the controller splits this prefix in two passes. The first splits the /24 into two /25s (1.0.0.0/25, 1.0.0.128/25) with traffic rates of (20Mbps, 40Mbps). Since the second /25 prefix is still above the threshold of 30 Mbps, it is further split into two /26s (1.0.0.128/26, 1.0.0.192/26) with traffic rates of (20Mbps, 20Mbps). At this point, everything is within the threshold so the splitting logic returns the final set of prefixes. The controller then detours 20Mbps of traffic for prefix 1.0.0.0/25 as can be seen in the above logs as well as in the BGP table of rtr1:</p>
+<pre><code>vagrant@rtr1:mgmt:~$ net show bgp
+show bgp ipv4 unicast
+=====================
+BGP table version is 426, local router ID is 50.50.50.50, vrf id 0
+Default local pref 100, local AS 12121
+Status codes:  s suppressed, d damped, h history, * valid, &gt; best, = multipath,
+               i internal, r RIB-failure, S Stale, R Removed
+Nexthop codes: @NNN nexthop's vrf id, &lt; announce-nh-self
+Origin codes:  i - IGP, e - EGP, ? - incomplete
+
+   Network          Next Hop            Metric LocPrf Weight Path
+*&gt; 1.0.0.0/16       172.16.0.2                             0 42428 i
+*  1.0.0.0/24       172.16.0.2                             0 42428 i
+*&gt;                  172.16.0.0                    200      0 33010 i
+*&gt;i1.0.0.0/25       172.16.0.2                    500      0 e
+*  1.0.1.0/24       172.16.0.2                             0 42428 i
+*&gt;                  172.16.0.0                    200      0 33010 i
+*  1.0.2.0/24       172.16.0.2                             0 42428 i
+*&gt;                  172.16.0.0                    200      0 33010 i
+*  1.0.3.0/24       172.16.0.2                             0 42428 i
+*&gt;                  172.16.0.0                    200      0 33010 i
+</code></pre><p>Our Grafana dashboards also reflect all the above decisions. Note that the per-prefix dashboards still only show the aggregate /24 prefixes due to a limitation with the host sflow daemon on the Cumulux VX that does not export route table extensions. We can also see that one of the prefixes in the 2.0.0.0/24 range was detoured for a short amount of time. In general, detours will be added and removed as counters get updated and the controller gets enough flow data to reach a steady state.</p>
+<p>
+  <img src="/img/grafana-2.png" alt="Grafana charts">
+
+</p>
+<h1 id="final-thoughts">Final thoughts</h1>
+<p>While the controller we designed works pretty well and as intended in a heavily simulated and fabricated environment, real world deployments are a whole different ball game :) Often times, traffic patterns and application behaviors will end up governing and influencing controller development over time. Even though you may see the traffic being correctly detoured, your applications may still experience issues that may lead you to question the validity of controller decisions. This is true for not just simple BGP injection based detours but also for the more complicated controller designs involving MPLS and such. This simple yet effective Proof-of-Concept design does prove however, that centralized software based control is a great way to ensure that the network ends up as nothing more than a commodity that your applications can leverage to help drive your business goals and decisions.</p>
+<p>Read Part 1 here :  <a href="https://mayuresh82.github.io/2021/02/23/edge-controller-part1/">https://mayuresh82.github.io/2021/02/23/edge-controller-part1/</a></p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2021/02/23/edge-controller-part1" data-toggle="tooltip" data-placement="top" title="Building an Edge Traffic Controller - Part 1">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "mayuresh82-gitub-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/bgp" title="bgp">
+                            bgp
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/controller" title="controller">
+                            controller
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/sdn" title="sdn">
+                            sdn
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/sflow" title="sflow">
+                            sflow
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="NRE-Bytes" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:nre-bytes@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+
+                    
+
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/mayuresh82">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/mayuresh-gaitonde-3232001/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://stackoverflow.com/users/11501174/mayuresh-gaitonde">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-stack-overflow fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+            
+                    
+                    
+                    
+            
+            
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; NRE-Bytes 2021
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-185781460-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>
