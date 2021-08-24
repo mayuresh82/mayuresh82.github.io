@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nautomation on NRE-Bytes</title>
+    <link>https://mayuresh82.github.io/categories/nautomation/</link>
+    <description>Recent content in Nautomation on NRE-Bytes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 23 Aug 2021 09:00:00 -0800</lastBuildDate><atom:link href="https://mayuresh82.github.io/categories/nautomation/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Turbocharge your Jinja2 Templates</title>
+      <link>https://mayuresh82.github.io/2021/08/23/j2_templating/</link>
+      <pubDate>Mon, 23 Aug 2021 09:00:00 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/2021/08/23/j2_templating/</guid>
+      <description>Jinja2 Templating for Network Configuration Management A critical part of Network Automation is Network Configuration management, which involves creating tooling or frameworks for maintaining, modifying, verifying and pushing configurations to network devices. In order to scale in a multi-vendor network environment, these configurations are often maintained as templates that are then rendered using variables ( usually YAML files or Python dictionaries ) according to specific business logic. Jinja2 is a Python based templating engine commonly used for this purpose.</description>
+    </item>
+    
+    <item>
+      <title>Building Dynamic Inventories in Nornir</title>
+      <link>https://mayuresh82.github.io/2020/12/25/nornir_inventories/</link>
+      <pubDate>Mon, 21 Dec 2020 15:05:46 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/2020/12/25/nornir_inventories/</guid>
+      <description>Building Dynamic Inventories in Nornir Organizing your Nornir inventory into multiple groups based on device attributes is a useful feature that allows running tasks against specific groups of hosts. Other frameworks like Ansible ship with a powerful dynamic inventory management system that allows grouping and filtering. While Nornir 3.0 has a community driven Netbox Plugin, it is pretty basic and includes a simple way to pull in hosts from Netbox. In this blog post, we will see how we can extend this Netbox plugin to build a dynamic inventory with powerful grouping and run-time filtering capabilities.</description>
+    </item>
+    
+    <item>
+      <title>Getting started with Network Automation</title>
+      <link>https://mayuresh82.github.io/2019/05/06/getting_started/</link>
+      <pubDate>Mon, 06 May 2019 15:05:46 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/2019/05/06/getting_started/</guid>
+      <description>Getting Started with Network Automation Network Automation is the “art” of automating repetitive tasks related to network provisioning, deployment, monitoring and alerting. The reason its an art is because you can conceptualize and develop very creative methods to achieve your network automation goals. To get started, it is important to first identify a problem that needs to be solved, ideally a simple one. This helps establish clear goals and helps navigate the myriad web of libraries and open source tools available at your disposal.</description>
+    </item>
+    
+  </channel>
+</rss>
