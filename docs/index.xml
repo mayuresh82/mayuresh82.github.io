@@ -6,7 +6,16 @@
     <description>Recent content on NRE-Bytes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 22 Mar 2021 09:00:00 -0800</lastBuildDate><atom:link href="https://mayuresh82.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 23 Aug 2021 09:00:00 -0800</lastBuildDate><atom:link href="https://mayuresh82.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Turbocharge your Jinja2 Templates</title>
+      <link>https://mayuresh82.github.io/2021/08/23/j2_templating/</link>
+      <pubDate>Mon, 23 Aug 2021 09:00:00 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/2021/08/23/j2_templating/</guid>
+      <description>Jinja2 Templating for Network Configuration Management A critical part of Network Automation is Network Configuration management, which involves creating tooling or frameworks for maintaining, modifying, verifying and pushing configurations to network devices. In order to scale in a multi-vendor network environment, these configurations are often maintained as templates that are then rendered using variables ( usually YAML files or Python dictionaries ) according to specific business logic. Jinja2 is a Python based templating engine commonly used for this purpose.</description>
+    </item>
+    
     <item>
       <title>Building an Edge Traffic Controller - Part 2</title>
       <link>https://mayuresh82.github.io/2021/03/22/edge-controller-part2/</link>

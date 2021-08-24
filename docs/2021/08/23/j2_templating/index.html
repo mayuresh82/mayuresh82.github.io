@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="NRE-Bytes">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://mayuresh82.github.io/img/banner-main.jpg">
+    <meta property="twitter:image" content="https://mayuresh82.github.io/img/banner-main.jpg" />
+    
+
+    
+    <meta name="title" content="Turbocharge your Jinja2 Templates" />
+    <meta property="og:title" content="Turbocharge your Jinja2 Templates" />
+    <meta property="twitter:title" content="Turbocharge your Jinja2 Templates" />
+    
+
+    
+    <meta name="description" content="Network Automation Blog with a focus on real world problems">
+    <meta property="og:description" content="Network Automation Blog with a focus on real world problems" />
+    <meta property="twitter:description" content="Network Automation Blog with a focus on real world problems" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="network, automation, build, anycast, scale, reliability, NRE, framework">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Turbocharge your Jinja2 Templates-mayuresh82 | Network Reliability Engineering</title>
+
+    <link rel="canonical" href="/2021/08/23/j2_templating">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">NRE-Bytes</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/general">general</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/infra">infra</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/nautomation">nautomation</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/nornir_inv.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/configuration" title="configuration">
+                            configuration
+                        </a>
+                        
+                        <a class="tag" href="/tags/templates" title="templates">
+                            templates
+                        </a>
+                        
+                        <a class="tag" href="/tags/automation" title="automation">
+                            automation
+                        </a>
+                        
+                    </div>
+                    <h1 class="heading">Turbocharge your Jinja2 Templates</h1>
+                    <h2 class="subheading">Optimize your network configuration templating using Jinja2 tweaks</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                            mayuresh82
+                         
+                        on 
+                        August 23, 2021
+                        
+                        
+                        
+						- 9 minute read
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#jinja2-templating-for-network-configuration-management">Jinja2 Templating for Network Configuration Management</a>
+      <ul>
+        <li><a href="#a-quick-jinja2-primer">A quick Jinja2 primer</a></li>
+        <li><a href="#optimizing-the-jinja2-compilation-process">Optimizing the Jinja2 compilation process</a></li>
+        <li><a href="#conclusion">Conclusion</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <h1 id="jinja2-templating-for-network-configuration-management">Jinja2 Templating for Network Configuration Management</h1>
+<p>A critical part of Network Automation is Network Configuration management, which involves creating tooling or frameworks for maintaining, modifying, verifying and pushing configurations to network devices. In order to scale in a multi-vendor network environment, these configurations are often maintained as templates that are then rendered using variables ( usually YAML files or Python dictionaries ) according to specific business logic. Jinja2 is a Python based templating engine commonly used for this purpose. It has gained a lot of popularity in the network automation community thanks in part to frameworks like Ansible adopting it.
+Jinja2 is inherently quite fast and expressive but there are a few internal tweaks we could use to further enhance its performance especially when working at scale. This blog post aims to explore some of those techniques.</p>
+<h2 id="a-quick-jinja2-primer">A quick Jinja2 primer</h2>
+<p>At the heart of the Jinja2 engine is the <code>Environment</code>. A <code>Loader</code> is first used to load templates from different resources, the most common of which is the file system. Templates can also be loaded from Python packages, modules, dictionaries etc. An instance of this Loader class is passed into the Environment which then uses it to load the appropriate templates and to render them according to specific configuration settings. You usually create one shared environment for a specific set of configuration settings. Once a template is selected ( which is just a blob of text ), the Environment then compiles it into native Python bytecode and the compiled template is then represented inside of a <code>Template</code> object.</p>
+<p>Given a template such as the one like this:</p>
+<pre><code>hostname {{hostname}}
+!
+logging host {{syslog_host}}
+!
+{% for interface in interfaces %}
+interface {{interface}}
+no switchport
+!
+</code></pre><p>which includes Jinja2 specific notation (the double braces syntax) as well as native Python syntax ( for xxx in &hellip; ), Jinja2 uses an internal <code>lexer</code> to separate out the two and then to &ldquo;translate&rdquo; the strings into smaller units (called tokens) that are recognized by the respective systems (i.e by Jinja2 and by Python itself) and can then be parsed/compiled into executable code. I won&rsquo;t dive into too many details but at a high level this looks something like this:</p>
+<p>
+  <figure>
+    <img src="/img/j2_compile.svg" alt="Test bed topology">
+    <center><figcaption>Jinja2 compilation</figcaption></center>
+  </figure>
+
+</p>
+<p>For a more in-depth look into things like AST, Lexers and Parsers, check out <a href="https://www.freecodecamp.org/news/the-programming-language-pipeline-91d3f449c919/">I Wrote a Programming Language</a>.</p>
+<h2 id="optimizing-the-jinja2-compilation-process">Optimizing the Jinja2 compilation process</h2>
+<p>If you are compiling just a single template ( say for a single device ), J2 is usally blazing fast ( even for really large templates ) and nothing else is really needed. However, lets think about a large production network consisting of thousands of network devices (think CLOS DC) comprising of more than one vendor. Regardless of the size of the network, you would typically want to keep configuration generation as fast as possible in order to maximize productivity and improve efficiency.</p>
+<p>For this exercise, we will assume a network of 10 Cisco IOS devices utilizing the same configuration template. The variables required to generate configs be stored in a YAML file. The folder structure for our files look like this:</p>
+<pre><code>/ __
+    |__ templates/
+              |______ cisco_ios.j2
+    |__ routers.yaml
+</code></pre><p>The dummy template and variable file look like below:</p>
+<details>
+  <summary>
+    Cisco IOS Template
+  </summary>
+  <pre><code>
+  version 12.3
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname {{hostname}}
+!
+boot-start-marker
+boot-end-marker
+!
+no aaa new-model
+ip subnet-zero
+!
+{% if enable_cef is defined and enable_cef %}
+ip cef
+{% endif %}
+ip ips po max-events 100
+no ftp-server write-enable
+!
+{% for intf in interfaces %}
+interface {{intf.name}}
+ {% if intf.ip_address is defined %}
+ ip address {{intf.ip_address}}
+ {% elif intf.vlan is defined %}
+ switchport mode access
+ switchport access vlan {{intf.vlan}}
+ {% endif %}
+ no shutdown
+ duplex auto
+ speed auto
+!
+{% endfor %}
+!
+!
+router bgp {{bgp.bgp_asn}}
+ router-id {{bgp.router_id}}
+ bgp log-neighbor-changes
+ {% for n in bgp.neighbors %}
+ neighbor {{n.address}} remote-as {{n.asn}}
+ {% for af in n.address_families %}
+ address-family {{af.afi}} {{af.safi|default('unicast')}}
+  neighbor {{n.address}} activate
+  {% for network in af.networks %}
+  network {{network.net}} mask {{network.mask}}
+  {% endfor %}
+  exit-address-family
+ {% endfor %}
+ {% endfor %}
+!
+ip classless
+!
+no ip http server
+no ip http secure-server
+!
+control-plane
+!
+line con 0
+ no modem enable
+ transport preferred all
+ transport output all
+line aux 0
+ transport preferred all
+ transport output all
+line vty 0 4
+ login
+ transport preferred all
+ transport input all
+ transport output all
+!
+end
+</pre></code>
+</details>
+<details>
+  <summary>
+    YAML variable file
+  </summary>
+  <pre><code>
+routers:
+  - hostname: rtr1
+    enable_cef: true
+    interfaces:
+      - name: GigabitEthernet0/0
+        ip_address: 10.1.1.1/24
+      - name: GigabitEthernet0/1
+        ip_address: 10.1.2.1/24
+      - name: GigabitEthernet0/3
+        vlan: 100
+      - name: GigabitEthernet0/4
+        vlan: 200
+      - name: vlan100
+        ip_address: 172.16.1.1/24
+      - name: vlan200
+        ip_address: 172.16.2.1/24
+    bgp:
+      bgp_asn: 1000
+      router_id: 1.1.1.1
+      neighbors:
+        - address: 10.1.1.2
+          asn: 2000
+          address_families:
+            - afi: ipv4
+              networks:
+                - net: 172.16.1.0
+                  mask: 255.255.255.0
+                - net: 172.16.2.0
+                  mask: 255.255.255.0
+        - address: 10.1.2.2
+          asn: 3000
+          address_families:
+            - afi: ipv4
+              networks:
+                - net: 172.16.1.0
+                  mask: 255.255.255.0
+                - net: 172.16.2.0
+                  mask: 255.255.255.0
+            - afi: vpnv4
+              safi: vrf FOO
+              networks:
+                - net: 172.16.0.0
+                  mask: 255.255.0.0
+    <...>
+   </pre></code>
+   </details> 
+<p>Lets write some basic Python code to read variables from the YAML document and use the corresponding dictionary as context for rendering our IOS template:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">import</span> yaml
+<span style="color:#ff79c6">from</span> jinja2 <span style="color:#ff79c6">import</span> Environment, FileSystemLoader
+
+<span style="color:#ff79c6">def</span> <span style="color:#50fa7b">render_configs</span>(router_data):
+    configs <span style="color:#ff79c6">=</span> []
+    <span style="color:#ff79c6">for</span> router <span style="color:#ff79c6">in</span> router_data[<span style="color:#f1fa8c">&#39;routers&#39;</span>]:
+        l <span style="color:#ff79c6">=</span> FileSystemLoader(<span style="color:#f1fa8c">&#39;templates&#39;</span>)
+        e <span style="color:#ff79c6">=</span>  Environment(loader<span style="color:#ff79c6">=</span>l)
+        t <span style="color:#ff79c6">=</span> e<span style="color:#ff79c6">.</span>get_template(<span style="color:#f1fa8c">&#39;cisco_ios.j2&#39;</span>)
+        configs<span style="color:#ff79c6">.</span>append(t<span style="color:#ff79c6">.</span>render(<span style="color:#ff79c6">**</span>router))
+    <span style="color:#ff79c6">return</span> configs
+
+<span style="color:#ff79c6">if</span> __name__ <span style="color:#ff79c6">==</span> <span style="color:#f1fa8c">&#39;__main__&#39;</span>:
+    <span style="color:#ff79c6">with</span> <span style="color:#8be9fd;font-style:italic">open</span>(<span style="color:#f1fa8c">&#39;routers.yaml&#39;</span>) <span style="color:#ff79c6">as</span> f:
+        router_data <span style="color:#ff79c6">=</span> yaml<span style="color:#ff79c6">.</span>load(f)
+    configs <span style="color:#ff79c6">=</span> render_configs(router_data)
+    <span style="color:#ff79c6">print</span>(configs)
+</code></pre></div><p><span style="font-family:monospace">example 1</span></p>
+<p>Executing this code in IPython using the magic %timeit function gives the following results:</p>
+<pre><code>
+In [1]: %timeit render_configs(router_data)
+<b>54.7 ms ± 723 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)</b>
+</code></pre>
+<p>So upon executing the rendering code 10 times for 10 routers each time, we get an average of 54.7ms per iteration. Now lets re-structure the render function slightly like below:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b">render_configs</span>(router_data):
+    l <span style="color:#ff79c6">=</span> FileSystemLoader(<span style="color:#f1fa8c">&#39;templates&#39;</span>)
+    e <span style="color:#ff79c6">=</span>  Environment(loader<span style="color:#ff79c6">=</span>l)
+    configs <span style="color:#ff79c6">=</span> []
+    <span style="color:#ff79c6">for</span> router <span style="color:#ff79c6">in</span> router_data[<span style="color:#f1fa8c">&#39;routers&#39;</span>]:
+        t <span style="color:#ff79c6">=</span> e<span style="color:#ff79c6">.</span>get_template(<span style="color:#f1fa8c">&#39;cisco_ios.j2&#39;</span>)
+        configs<span style="color:#ff79c6">.</span>append(t<span style="color:#ff79c6">.</span>render(<span style="color:#ff79c6">**</span>router))
+    <span style="color:#ff79c6">return</span> configs
+</code></pre></div><p><span style="font-family:monospace">example 2</span></p>
+<p>After executing it again in IPython:</p>
+<pre><code>
+In [2]: %timeit render_configs(router_data)
+<b>6.29 ms ± 176 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)</b>
+</code></pre>
+<p>This time it only takes a total of 6.29ms per loop, almost an 8x speed improvement ! Analyzing the change we made, you can see that we essentially moved from creating a new loader and a new environment each time for 10 devices to using the same shared loader and environment for all the routers. Jinja2&rsquo;s <code>Environment</code> features an internal in-memory template cache (implemented as an LRU cache) that stores the last N frequently compiled templates. Because we are using the same environment and the same template across all routers, this results in a cache hit almost every time thereby removing the need to compile the same template each time.</p>
+<p>In fact, this is the recommended way to use the Environment in the real world where you would routinely render multiple templates across multiple devices at the same time. Also in the real world, you would probably want to use some form of parallelism to render configuration templates across multiple devices depending on the framework or tooling in use. The LRU cache used internally by Jinja2 is thread-safe by design. The above function can be re-written to use one thread per router:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">import</span> threading
+
+<span style="color:#ff79c6">def</span> <span style="color:#50fa7b">render_configs</span>(router_data):
+    l <span style="color:#ff79c6">=</span> FileSystemLoader(<span style="color:#f1fa8c">&#39;templates&#39;</span>)
+    e <span style="color:#ff79c6">=</span>  Environment(loader<span style="color:#ff79c6">=</span>l)
+    configs <span style="color:#ff79c6">=</span> []
+    threads <span style="color:#ff79c6">=</span> []
+    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">_render</span>(router):
+        t <span style="color:#ff79c6">=</span> e<span style="color:#ff79c6">.</span>get_template(<span style="color:#f1fa8c">&#39;cisco_ios.j2&#39;</span>)
+        configs<span style="color:#ff79c6">.</span>append(t<span style="color:#ff79c6">.</span>render(<span style="color:#ff79c6">**</span>router))
+    <span style="color:#ff79c6">for</span> router <span style="color:#ff79c6">in</span> router_data[<span style="color:#f1fa8c">&#39;routers&#39;</span>]:
+        t <span style="color:#ff79c6">=</span> threading<span style="color:#ff79c6">.</span>Thread(target<span style="color:#ff79c6">=</span>_render, args<span style="color:#ff79c6">=</span>(router,))
+        t<span style="color:#ff79c6">.</span>start()
+        threads<span style="color:#ff79c6">.</span>append(t)
+    <span style="color:#ff79c6">for</span> t <span style="color:#ff79c6">in</span> threads:
+        t<span style="color:#ff79c6">.</span>join()
+    <span style="color:#ff79c6">return</span> configs
+</code></pre></div><p><span style="font-family:monospace">example 3</span></p>
+<pre><code>
+In [3]: %timeit render_configs(router_data)
+<b>16 ms ± 1.23 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)</b>
+</code></pre>
+<p>We see that performance here is worse than in the single threaded case. This presumably happens because template rendering is a CPU bound task, and the additional overhead here of switching between threads actually ends up slowing the program down.</p>
+<h3 id="bytecode-caching">Bytecode Caching</h3>
+<p>Jinja2 supports external caching of the byte-code resulting from compiling templates. Disk-based caches, memcached etc can be used for this purpose. Lets see in our final experiment, the result of enabling a disk cache. We simply pass in an instance of the <code>FileSystemBytecodeCache</code> that ships with Jinja2 into the environment before rendering:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">from</span> jinja2 <span style="color:#ff79c6">import</span> FileSystemBytecodeCache
+
+<span style="color:#ff79c6">def</span> <span style="color:#50fa7b">render_configs</span>(router_data):
+    l <span style="color:#ff79c6">=</span> FileSystemLoader(<span style="color:#f1fa8c">&#39;templates&#39;</span>)
+    e <span style="color:#ff79c6">=</span>  Environment(loader<span style="color:#ff79c6">=</span>l, bytecode_cache<span style="color:#ff79c6">=</span>FileSystemBytecodeCache(<span style="color:#f1fa8c">&#39;templates/.cache&#39;</span>))
+    configs <span style="color:#ff79c6">=</span> []
+    <span style="color:#ff79c6">for</span> router <span style="color:#ff79c6">in</span> router_data[<span style="color:#f1fa8c">&#39;routers&#39;</span>]:
+        t <span style="color:#ff79c6">=</span> e<span style="color:#ff79c6">.</span>get_template(<span style="color:#f1fa8c">&#39;cisco_ios.j2&#39;</span>)
+        configs<span style="color:#ff79c6">.</span>append(t<span style="color:#ff79c6">.</span>render(<span style="color:#ff79c6">**</span>router))
+    <span style="color:#ff79c6">return</span> configs
+</code></pre></div><p><span style="font-family:monospace">example 4</span></p>
+<p>Running this in IPython, we get:</p>
+<pre><code>
+In [4]: %timeit render_configs(router_data)
+<b>1.05 ms ± 32.1 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)</b>
+</code></pre>
+<p>We now get a template render time of just 1.05ms, a super impressive 6x speed up over the previous single threaded example ! So what is going on here ?</p>
+<p>The only thing different in this scenario is that Jinja2 stores the compiled byte-code for a template to disk at the location <code>templates/.cache</code>. This happens on the first run of the 1000 iterations that the %timeit function performs. Thus if a template is only ever rendered once, this cache has no effect. The real power of the file system based cache is seen during subsequent runs.</p>
+<p>In the case of running <code>render_configs()</code> a 100 times in the example 2 above, the template needs to be loaded and compiled during the start of each loop for the first router being rendered (i.e all 100 times). After the first router is rendered, subsquent routers using the same template will see a hit for the in-memory cache. Compare this with the example 4 of using the file system cache, where the template will see a hit every other time there is an attempt made to load it, which includes the 999 remaining times the function executes. Thus for the 1000 iterations, the template only really needs to be compiled 1 time !</p>
+<p>Note that the file system bytecode cache is &ldquo;smart&rdquo; enough to invalidate on-disk bytecode if the template source code changes. This is done using an internal checksum that gets assigned to each cache &ldquo;bucket&rdquo; and is used to ensure that source code is upto date.
+Similarly , one can pass in <code>auto_reload=True</code> to the <code>Environment</code> upon initialization to check staleness of templates in the in-memory cache as well. This is useful in cases where you have a long running service (e.g web service) that loads templates from the file-system that may change over time.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Jinja2 is already pretty fast and expressive right out of the box. By combining some best practices and tweaks as highligted here with good template design, you can ensure that you build a scalable and efficient configuration rendering system that will serve you well for years to come, until something better comes along of course :)</p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2021/03/22/edge-controller-part2" data-toggle="tooltip" data-placement="top" title="Building an Edge Traffic Controller - Part 2">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "mayuresh82-gitub-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/bgp" title="bgp">
+                            bgp
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/controller" title="controller">
+                            controller
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/sdn" title="sdn">
+                            sdn
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/sflow" title="sflow">
+                            sflow
+                        </a>
+                        
+                        
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="NRE-Bytes" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:nre-bytes@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+
+                    
+
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/mayuresh82">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/mayuresh-gaitonde-3232001/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://stackoverflow.com/users/11501174/mayuresh-gaitonde">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-stack-overflow fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+            
+                    
+                    
+                    
+            
+            
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; NRE-Bytes 2021
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-185781460-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>
