@@ -196,7 +196,7 @@
                         
                         
                         
-						- 9 minute read
+						- 10 minute read
                     </span>
                 </div>
             </div>
@@ -266,7 +266,7 @@ no switchport
 </code></pre><p>The dummy template and variable file look like below:</p>
 <details>
   <summary>
-    Cisco IOS Template
+    > Cisco IOS Template
   </summary>
   <pre><code>
   version 12.3
@@ -344,7 +344,7 @@ end
 </details>
 <details>
   <summary>
-    YAML variable file
+    > YAML variable file
   </summary>
   <pre><code>
 routers:
@@ -390,10 +390,52 @@ routers:
               networks:
                 - net: 172.16.0.0
                   mask: 255.255.0.0
+  - hostname: rtr2
+    enable_cef: true
+    interfaces:
+      - name: GigabitEthernet0/0
+        ip_address: 10.2.1.1/24
+      - name: GigabitEthernet0/1
+        ip_address: 10.2.2.1/24
+      - name: GigabitEthernet0/3
+        vlan: 100
+      - name: GigabitEthernet0/4
+        vlan: 200
+      - name: vlan100
+        ip_address: 172.16.3.1/24
+      - name: vlan200
+        ip_address: 172.16.4.1/24
+    bgp:
+      bgp_asn: 1001
+      router_id: 1.1.1.2
+      neighbors:
+        - address: 10.2.1.2
+          asn: 2000
+          address_families:
+            - afi: ipv4
+              networks:
+                - net: 172.16.3.0
+                  mask: 255.255.255.0
+                - net: 172.16.4.0
+                  mask: 255.255.255.0
+        - address: 10.2.2.2
+          asn: 3000
+          address_families:
+            - afi: ipv4
+              networks:
+                - net: 172.16.3.0
+                  mask: 255.255.255.0
+                - net: 172.16.4.0
+                  mask: 255.255.255.0
+            - afi: vpnv4
+              safi: vrf FOO
+              networks:
+                - net: 172.16.0.0
+                  mask: 255.255.0.0
     <...>
    </pre></code>
    </details> 
-<p>Lets write some basic Python code to read variables from the YAML document and use the corresponding dictionary as context for rendering our IOS template:</p>
+<p>Rendering a template is a pretty straightforward process in Jinja land. You decide on a <code>Loader</code> to use (e.g to load templates from a file system, use <code>FileSystemLoader</code>), pass the loader into an instance of the <code>Environemnt</code> ( along with other configuration settings if required ), get the specific <code>Template</code> object by name, and call <code>render()</code> on it passing in the contextual data. Lets write some basic Python code to read variables from the YAML document and use the corresponding dictionary as context for rendering our IOS template:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">import</span> yaml
 <span style="color:#ff79c6">from</span> jinja2 <span style="color:#ff79c6">import</span> Environment, FileSystemLoader
 
