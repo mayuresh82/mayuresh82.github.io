@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="NRE-Bytes">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://mayuresh82.github.io/img/banner-main.jpg">
+    <meta property="twitter:image" content="https://mayuresh82.github.io/img/banner-main.jpg" />
+    
+
+    
+    <meta name="title" content="So you want to GNMI ?" />
+    <meta property="og:title" content="So you want to GNMI ?" />
+    <meta property="twitter:title" content="So you want to GNMI ?" />
+    
+
+    
+    <meta name="description" content="Network Automation Blog with a focus on real world problems">
+    <meta property="og:description" content="Network Automation Blog with a focus on real world problems" />
+    <meta property="twitter:description" content="Network Automation Blog with a focus on real world problems" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="network, automation, build, anycast, scale, reliability, NRE, framework">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>So you want to GNMI ?-mayuresh82 | Network Reliability Engineering</title>
+
+    <link rel="canonical" href="/2021/12/23/gnmi_practical">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">NRE-Bytes</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/general">general</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/infra">infra</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/nautomation">nautomation</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/gnmi.jpeg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/telemetry" title="telemetry">
+                            telemetry
+                        </a>
+                        
+                        <a class="tag" href="/tags/gnmi" title="gnmi">
+                            gnmi
+                        </a>
+                        
+                        <a class="tag" href="/tags/grpc" title="grpc">
+                            grpc
+                        </a>
+                        
+                    </div>
+                    <h1 class="heading">So you want to GNMI ?</h1>
+                    <h2 class="subheading">Practical aspects to consider when using GNMI for Network Telemetry</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                            mayuresh82
+                         
+                        on 
+                        December 23, 2021
+                        
+                        
+                        
+						- 9 minute read
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#gnmi-for-network-telemetry">GNMI for Network Telemetry</a>
+      <ul>
+        <li><a href="#to-get-or-to-subscribe-">To GET or to Subscribe ?</a></li>
+        <li><a href="#not-all-implementations-are-created-equal">Not all implementations are created equal</a></li>
+        <li><a href="#test-test-and-test-some-more">Test, test and test some more</a></li>
+        <li><a href="#think-holisticially-and-plan-ahead">Think holisticially and plan ahead</a></li>
+        <li><a href="#dont-worry-too-much-about-yang">Dont worry too much about YANG</a></li>
+        <li><a href="#be-prepared-to-write-code">Be prepared to write code</a></li>
+        <li><a href="#pay-special-attention-to-failures-and-redundancy">Pay special attention to failures and redundancy</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <h1 id="gnmi-for-network-telemetry">GNMI for Network Telemetry</h1>
+<p>For those readers who build and manage Network Telemetry stacks, GNMI (GRPC Network Management Interface) is probably one of the hottest topics being discussed right now, and for good reason. The industry has relied far too long on vendor specific mechanisms for obtaining telemetry data from network devices. Its been a viscious cycle of vendors heavily promoting their own telemetry stacks thereby increasing the dependency on those stacks while further de-incentivizing them to work on anything collaborative and standardized for the benefit of end customers. Thankfully, the recent push from our good friends at Google et.al has gotten some of the major vendors (Juniper, Arista, Cisco, Nokia etc.) to put some real effort towards implementing GNMI on their platforms.</p>
+<p>However, just because vendors support GNMI does not mean things will automatically work like magic out of the box ! Vendor implementations of GNMI are still very much in their infancy, although some vendors have a more robust implementation than others. Although GNMI can be used as a unified way of managing a network device holistically for tasks like fetching operational data and setting configuration parameters, using GNMI for telemetry data is a good starting point to discover its true benefits. This means data pertaining to the main indicators of network observability such as interface and routing protocol statistics. Thanks to the beauty of Protobuf encoding and HTTP/2 streaming, this mechanism is blazing fast compared to things like Netconf and SNMP. This data is also modelled according to YANG specifications and for vendors supporting OpenConfig models, you get unified telemetry straight out of the box which translates to easier monitoring and dashboarding.</p>
+<p>This blog post will attempt to highlight some pratical aspects to consider when using GNMI&rsquo;s streaming telemetry to set up a Network telemetry stack. It assumes some basic knowledge of GNMI and GRPC. Although there are plenty of resources available on these topics online, the best resource is the <a href="https://github.com/openconfig/reference/blob/master/rpc/gnmi/gnmi-specification.md">GNMI Specification</a> itself.</p>
+<h2 id="to-get-or-to-subscribe-">To GET or to Subscribe ?</h2>
+<p>GNMI supports both a GET operation as well as a Subscribe operation so it may sometimes be confusing to determine which mechanism to adopt for quering telemetry data from devices. GET is best reserved for operations that involves using the obtained data for semi real-time management tasks such as configuration management, testing frameworks and  other forms of automation. For example you can query the operational state of an interface using GET, &ldquo;marshal&rdquo; that data into a Go struct and then use the struct for writing network tests. On the other hand, Subsribe is more inherently suited to telemetry streaming. Network devices can periodically stream real-time operational statistics thereby eliminating the drawbacks of traditional polling such as lack of scalability and precision. This fits perfectly into a monitoring application involving time series.
+The GNMI spec also allows different subscription modes such as <code>SAMPLE</code>, <code>ON_CHANGE</code> and <code>TARGET_DEFINED</code>. For most cases, this is best left at the default value of <code>SAMPLE</code> unless the vendor specifically supports <code>ON_CHANGE</code> for certain paths (for e.g. it may be useful to create an alerting pipeline based on BGP states changing.)</p>
+<h2 id="not-all-implementations-are-created-equal">Not all implementations are created equal</h2>
+<p>Although the GNMI specification aims to provide a standardized interface for operational data, implementations across vendors can and will differ when it comes to practical use cases. The specification allows some flexibility in how GNMI servers ( vendor devices) can structure the data that is sent in response to a subscribe or get request.</p>
+<p>As an example, Arista chooses to return every leaf value for the same path in a different GNMI <code>Notification</code> message as illustrated below for the openconfig path <code>/interfaces/interface/state/counters</code> (fetched via <code>gnmic</code> and dumped as JSON for clarity):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#ff79c6">&#34;source&#34;</span>: <span style="color:#f1fa8c">&#34;1.1.1.1:50010&#34;</span>,
+  <span style="color:#ff79c6">&#34;subscription-name&#34;</span>: <span style="color:#f1fa8c">&#34;default-1640129309&#34;</span>,
+  <span style="color:#ff79c6">&#34;timestamp&#34;</span>: <span style="color:#bd93f9">1635813813518825447</span>,
+  <span style="color:#ff79c6">&#34;time&#34;</span>: <span style="color:#f1fa8c">&#34;2021-11-02T00:43:33.518825447Z&#34;</span>,
+  <span style="color:#ff79c6">&#34;updates&#34;</span>: [
+    {
+      <span style="color:#ff79c6">&#34;Path&#34;</span>: <span style="color:#f1fa8c">&#34;interfaces/interface[name=Ethernet1]/state/counters/in-broadcast-pkts&#34;</span>,
+      <span style="color:#ff79c6">&#34;values&#34;</span>: {
+        <span style="color:#ff79c6">&#34;interfaces/interface/state/counters/in-broadcast-pkts&#34;</span>: <span style="color:#bd93f9">0</span>
+      }
+    }
+  ]
+}
+{
+  <span style="color:#ff79c6">&#34;source&#34;</span>: <span style="color:#f1fa8c">&#34;1.1.1.1:50010&#34;</span>,
+  <span style="color:#ff79c6">&#34;subscription-name&#34;</span>: <span style="color:#f1fa8c">&#34;default-1640129309&#34;</span>,
+  <span style="color:#ff79c6">&#34;timestamp&#34;</span>: <span style="color:#bd93f9">1635813813518825447</span>,
+  <span style="color:#ff79c6">&#34;time&#34;</span>: <span style="color:#f1fa8c">&#34;2021-11-02T00:43:33.518825447Z&#34;</span>,
+  <span style="color:#ff79c6">&#34;updates&#34;</span>: [
+    {
+      <span style="color:#ff79c6">&#34;Path&#34;</span>: <span style="color:#f1fa8c">&#34;interfaces/interface[name=Ethernet49/1]/state/counters/in-discards&#34;</span>,
+      <span style="color:#ff79c6">&#34;values&#34;</span>: {
+        <span style="color:#ff79c6">&#34;interfaces/interface/state/counters/in-discards&#34;</span>: <span style="color:#bd93f9">0</span>
+      }
+    }
+  ]
+}
+{
+  <span style="color:#ff79c6">&#34;source&#34;</span>: <span style="color:#f1fa8c">&#34;1.1.1.1:50010&#34;</span>,
+  <span style="color:#ff79c6">&#34;subscription-name&#34;</span>: <span style="color:#f1fa8c">&#34;default-1640129309&#34;</span>,
+  <span style="color:#ff79c6">&#34;timestamp&#34;</span>: <span style="color:#bd93f9">1635813813518825447</span>,
+  <span style="color:#ff79c6">&#34;time&#34;</span>: <span style="color:#f1fa8c">&#34;2021-11-02T00:43:33.518825447Z&#34;</span>,
+  <span style="color:#ff79c6">&#34;updates&#34;</span>: [
+    {
+      <span style="color:#ff79c6">&#34;Path&#34;</span>: <span style="color:#f1fa8c">&#34;interfaces/interface[name=Ethernet49/1]/state/counters/in-errors&#34;</span>,
+      <span style="color:#ff79c6">&#34;values&#34;</span>: {
+        <span style="color:#ff79c6">&#34;interfaces/interface/state/counters/in-errors&#34;</span>: <span style="color:#bd93f9">0</span>
+      }
+    }
+  ]
+}
+</code></pre></div><p>You can see here that each counter value is sent as part of a separate GNMI Notification. Compare this with NXOS that sends all counter values (leafs) in the same Notification message encoded as multiple path elements with a common prefix:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#ff79c6">&#34;source&#34;</span>: <span style="color:#f1fa8c">&#34;2.2.2.2:50001&#34;</span>,
+  <span style="color:#ff79c6">&#34;subscription-name&#34;</span>: <span style="color:#f1fa8c">&#34;default-1640130441&#34;</span>,
+  <span style="color:#ff79c6">&#34;timestamp&#34;</span>: <span style="color:#bd93f9">1640130550620000000</span>,
+  <span style="color:#ff79c6">&#34;time&#34;</span>: <span style="color:#f1fa8c">&#34;2021-12-21T23:49:10.62Z&#34;</span>,
+  <span style="color:#ff79c6">&#34;prefix&#34;</span>: <span style="color:#f1fa8c">&#34;interfaces/interface[name=eth1/1]&#34;</span>,
+  <span style="color:#ff79c6">&#34;updates&#34;</span>: [
+    {
+      <span style="color:#ff79c6">&#34;Path&#34;</span>: <span style="color:#f1fa8c">&#34;state/counters/in-pkts&#34;</span>,
+      <span style="color:#ff79c6">&#34;values&#34;</span>: {
+        <span style="color:#ff79c6">&#34;state/counters/in-pkts&#34;</span>: <span style="color:#bd93f9">9188610</span>
+      }
+    },
+    {
+      <span style="color:#ff79c6">&#34;Path&#34;</span>: <span style="color:#f1fa8c">&#34;state/counters/in-octets&#34;</span>,
+      <span style="color:#ff79c6">&#34;values&#34;</span>: {
+        <span style="color:#ff79c6">&#34;state/counters/in-octets&#34;</span>: <span style="color:#bd93f9">950152356</span>
+      }
+    },
+    {
+      <span style="color:#ff79c6">&#34;Path&#34;</span>: <span style="color:#f1fa8c">&#34;state/counters/in-unicast-pkts&#34;</span>,
+      <span style="color:#ff79c6">&#34;values&#34;</span>: {
+        <span style="color:#ff79c6">&#34;state/counters/in-unicast-pkts&#34;</span>: <span style="color:#bd93f9">9149409</span>
+      }
+    },
+   &lt;--snip--&gt;
+  ]
+}
+{
+  <span style="color:#ff79c6">&#34;source&#34;</span>: <span style="color:#f1fa8c">&#34;2.2.2.2:50001&#34;</span>,
+  <span style="color:#ff79c6">&#34;subscription-name&#34;</span>: <span style="color:#f1fa8c">&#34;default-1640130441&#34;</span>,
+  <span style="color:#ff79c6">&#34;timestamp&#34;</span>: <span style="color:#bd93f9">1640130550620000000</span>,
+  <span style="color:#ff79c6">&#34;time&#34;</span>: <span style="color:#f1fa8c">&#34;2021-12-21T23:50:10.62Z&#34;</span>,
+  <span style="color:#ff79c6">&#34;prefix&#34;</span>: <span style="color:#f1fa8c">&#34;&#34;</span>,
+  <span style="color:#ff79c6">&#34;updates&#34;</span>: [
+  ]
+}
+</code></pre></div><p>Both are acceptable mechanisms of sending the requested data according to the GNMI specification, although the NXOS way definitely is more user friendly and makes more logical sense. After all, why not group all counters for the same interface into the same notification message with a common path prefix, especially since the protocol allows you to do so ?!
+Then there can also be cases where vendors deviate away from what the protocol specifies. Notice the response from the NXOS box contains an empty notification message with no updates. Turns out that Cisco decided to implement its own &ldquo;keepalive&rdquo; mechanism by sending empty messages periodically. Perhaps a useful feature to have, but nowhere to be found in the GNMI spec. This kind of stuff would be ok if you were to use an off the shelf product which takes care of parsing these updates for you, but in a lot of client implementations this would be need to be accounted for.</p>
+<h2 id="test-test-and-test-some-more">Test, test and test some more</h2>
+<p>The last thing you would want is to set up a sophisticated telemetry stack based on GNMI only to find out that the data returned is not what you expect or has key pieces of information missing.  Use open source tools like <code>gnmic</code> to test out all the GNMI paths across all vendors that you wish to collect in production. Chances are rather high that you will find inconsistencies in the data returned that will force you to adapt your tooling to accomodate each special snowflake.  Be prepared to file plenty of bug reports !</p>
+<h2 id="think-holisticially-and-plan-ahead">Think holisticially and plan ahead</h2>
+<p>When trying to adopt GNMI, you need to make sure you consider the full end to end picture.</p>
+<ul>
+<li>What GNMI Paths do you want to subscribe to for specific telemetry data and how do you make that configurable on a per device basis ?</li>
+<li>How do you want the returned data to be encoded ?</li>
+<li>How do you expect to parse the received data and translate it into a format that is suitable for a Time Series Database (TSDB) such as Prometheus ?</li>
+<li>What values from the returned data should actually end up inside of the TSDB and how should they be represented inside of the TSDB ?</li>
+<li>Does the vendor implementation return all the data that is relevant to your monitoring needs ?
+These are all valid questions that would need to be answered for a proper production deployment. Be prepared to use a combination of open-config models as well as vendor specific models in order to get all the data you need. There is also a high chance that you would still need to use traditional monitoring methods (Netconf/REST etc.) side by side to get data that has not yet been ported over to GNMI.</li>
+</ul>
+<h2 id="dont-worry-too-much-about-yang">Dont worry too much about YANG</h2>
+<p>It is defintely important to understand the fact that telemetry data that is returned from the devices is modelled in YANG format. What does this imply when it comes to building a telemetry stack using GNMI ? Do you really need to memorize the YANG specification, including stuff like containers, leafs and leaf-lists?
+From a server (network device) perspective, this is imperative to know since it dictates the way the data would be represented (modelled) before it is encoded. From a client&rsquo;s perspective, the YANG data model is useful in figuring out the paths ( or XPATHS ) that you would use to query specific values along the YANG tree. For example if you want to know the <code>in-errors</code> value for a specific interface, you would traverse the path <code>/interfaces/interface[name=Eth1]/state/counters/in-errors</code>. Once the data is returned, the client needs to understand how the data is <em>encoded</em> more than how it is modelled, since it needs to parse the returned data and convert it into a format that is meaningful (perhaps to a backend datastore). For example if JSON encoding was requested, the client may implement a JSON parser such as JSONPATH to query fields in the returned JSON. Of course this changes if you intend to use GNMI for things like configuration modelling in which case some YANG knowledge would be required.</p>
+<h2 id="be-prepared-to-write-code">Be prepared to write code</h2>
+<p>Although there are a few high quality open source tools that allow you to quickly get a GNMI stack up and running, there is usually a large gap that needs to be filled - one of integrating these tools into your business logic or business requirements. How do you  integrate into a Source of Truth for device inventory or a credentials management system for device credentials and certificates ? Is it ok to simply subscribe to a telemetry stream and freely dump all possible values returned into your TSDB ? Needless to say, backend resources are not free (nor cheap)! How do you filter out or specify data that is truly meaningful to you from an observability standpoint ? These kind of tasks will either require plugins that are pre-created or some amount of coding effort.</p>
+<h2 id="pay-special-attention-to-failures-and-redundancy">Pay special attention to failures and redundancy</h2>
+<p>GNMI relies on GRPC which uses a persistent long-running TCP (HTTP/2) connection to the targets for subscribe operations. As a result, its important to ensure that network failures and device unreachability is prompty detected. For a subscribe operation, the client has no way of rapidly detecting an underlying TCP connection failure if no messages are being sent (often relying on the underlying system TCP timeout which can be as high as 30 minutes). This is in contrast to traditional polling operations where failures can be easily detected via timeouts. Things like GRPC keepalives can help mitigate this. Similarly, using clustering or grouping mechanisms on the client side ensures continuos telemetry in the event of client node failures.</p>
+<p>GNMI is a major step towards unifying the network management interfaces across different vendors. Most vendor GNMI implementations, while still in their infancy, are ok enough that customers now have a realistic chance of creating a true unified telemetry and network management stack. However, the real benefits can only be reaped when all the major vendors collaborate towards future development and improvements of the standard while pledging to keep ease of adoption and usage in mind !</p>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2021/08/23/j2_templating" data-toggle="tooltip" data-placement="top" title="Turbocharge your Jinja2 Templates">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "mayuresh82-gitub-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/bgp" title="bgp">
+                            bgp
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/controller" title="controller">
+                            controller
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/sdn" title="sdn">
+                            sdn
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/sflow" title="sflow">
+                            sflow
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="NRE-Bytes" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:nre-bytes@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+
+                    
+
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/mayuresh82">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/mayuresh-gaitonde-3232001/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://stackoverflow.com/users/11501174/mayuresh-gaitonde">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-stack-overflow fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+            
+                    
+                    
+                    
+            
+            
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; NRE-Bytes 2021
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-185781460-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>

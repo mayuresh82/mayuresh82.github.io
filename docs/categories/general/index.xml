@@ -26,23 +26,5 @@ Initial Setup To recap, this is what our topology looks like:</description>
       <description>2017 was the year of the Software Defined Network (SDN). Apart from other things like new players jumping onto the SDN space and a bunch of new SD-WAN offerings, two prominent innovation leaders - Google and Facebook - both released blogs and papers on their software defined edge network. Google&amp;rsquo;s solution; named Espresso, is likely a more battle tested and production-hardened solution owning to years of R&amp;amp;D and testing. It is, however (or at least in my opinion) a lot more complex than Facebook&amp;rsquo;s Edge Fabric that uses a much simpler approach to solving the same problem - which is to overcome BGP&amp;rsquo;s inability to take link performance ( which translates to application performance) into account for its routing decisions.</description>
     </item>
     
-    <item>
-      <title>Building Dynamic Inventories in Nornir</title>
-      <link>https://mayuresh82.github.io/2020/12/25/nornir_inventories/</link>
-      <pubDate>Mon, 21 Dec 2020 15:05:46 -0800</pubDate>
-      
-      <guid>https://mayuresh82.github.io/2020/12/25/nornir_inventories/</guid>
-      <description>Building Dynamic Inventories in Nornir Organizing your Nornir inventory into multiple groups based on device attributes is a useful feature that allows running tasks against specific groups of hosts. Other frameworks like Ansible ship with a powerful dynamic inventory management system that allows grouping and filtering. While Nornir 3.0 has a community driven Netbox Plugin, it is pretty basic and includes a simple way to pull in hosts from Netbox. In this blog post, we will see how we can extend this Netbox plugin to build a dynamic inventory with powerful grouping and run-time filtering capabilities.</description>
-    </item>
-    
-    <item>
-      <title>Getting started with Network Automation</title>
-      <link>https://mayuresh82.github.io/2019/05/06/getting_started/</link>
-      <pubDate>Mon, 06 May 2019 15:05:46 -0800</pubDate>
-      
-      <guid>https://mayuresh82.github.io/2019/05/06/getting_started/</guid>
-      <description>Getting Started with Network Automation Network Automation is the “art” of automating repetitive tasks related to network provisioning, deployment, monitoring and alerting. The reason its an art is because you can conceptualize and develop very creative methods to achieve your network automation goals. To get started, it is important to first identify a problem that needs to be solved, ideally a simple one. This helps establish clear goals and helps navigate the myriad web of libraries and open source tools available at your disposal.</description>
-    </item>
-    
   </channel>
 </rss>

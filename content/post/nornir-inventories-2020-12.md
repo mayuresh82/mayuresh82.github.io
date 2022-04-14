@@ -12,7 +12,7 @@ tags:
     - inventory
     - dynamic
 URL: "/2020/12/25/nornir_inventories"
-categories: [ "General" ]
+categories: [ "Nautomation" ]
 ---
 
 # Building Dynamic Inventories in Nornir
