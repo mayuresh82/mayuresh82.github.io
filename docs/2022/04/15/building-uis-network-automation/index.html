@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="NRE-Bytes">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://mayuresh82.github.io/img/banner-main.jpg">
+    <meta property="twitter:image" content="https://mayuresh82.github.io/img/banner-main.jpg" />
+    
+
+    
+    <meta name="title" content="Building User Interfaces for Network Automation" />
+    <meta property="og:title" content="Building User Interfaces for Network Automation" />
+    <meta property="twitter:title" content="Building User Interfaces for Network Automation" />
+    
+
+    
+    <meta name="description" content="Network Automation Blog with a focus on real world problems">
+    <meta property="og:description" content="Network Automation Blog with a focus on real world problems" />
+    <meta property="twitter:description" content="Network Automation Blog with a focus on real world problems" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="network, automation, build, anycast, scale, reliability, NRE, framework">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Building User Interfaces for Network Automation-mayuresh82 | Network Reliability Engineering</title>
+
+    <link rel="canonical" href="/2022/04/15/building-uis-network-automation">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">NRE-Bytes</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/general">general</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/infra">infra</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/nautomation">nautomation</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/epe-pt1.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/ui" title="ui">
+                            ui
+                        </a>
+                        
+                        <a class="tag" href="/tags/react" title="react">
+                            react
+                        </a>
+                        
+                        <a class="tag" href="/tags/network-automation" title="network-automation">
+                            network-automation
+                        </a>
+                        
+                    </div>
+                    <h1 class="heading">Building User Interfaces for Network Automation</h1>
+                    <h2 class="subheading">Exploring ways to implement user interfaces for network automation frameworks</h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                            mayuresh82
+                         
+                        on 
+                        April 15, 2022
+                        
+                        
+                        
+						- 10 minute read
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+  <ul>
+    <li><a href="#the-importance-of-user-interfaces-for-network-automation">The importance of User Interfaces for Network Automation</a>
+      <ul>
+        <li><a href="#day-1-the-cli">Day 1: The CLI</a></li>
+        <li><a href="#day-2-the-api">Day 2: The API</a></li>
+        <li><a href="#day-3-the-ui">Day 3: The UI</a></li>
+        <li><a href="#day-4-and-beyond">Day 4 and beyond</a></li>
+        <li><a href="#user-interface-best-practices">User Interface Best Practices</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                
+                <h1 id="the-importance-of-user-interfaces-for-network-automation">The importance of User Interfaces for Network Automation</h1>
+<p>One of the least talked about aspects of network automation workflows is the ability to interface with the different tools and frameworks that enable these workflows. Consider a scenario where you are part of a small team of Network Engineers in a small company that has a small but growing customer base. You realize the need to automate your device and link provisioning workflows and hack up a few Python scripts (or Ansible playbooks if you prefer) that get the job done in the beginning.</p>
+<p>Over time, your company grows exponentially and so does your production network environment. You now have a dedicated team of engineers solely responsible for network deployment and bandwidth provisioning. In such a scenario, it becomes imperative to allow other engineers to run automation workflows for device management and provisioning; and careful thought must be given to the end user experience in order to ensure that your automation tools dont act as blockers for the overall growth of company infrastructure. This still leaves you, the original author of those frameworks in charge of maintaining these tools but you are now able to offload trivial and repetetive tasks to other teams so you can focus on higher priority problems. This post explores how one can approach the problem initially and evolve the user interface over time.</p>
+<h2 id="day-1-the-cli">Day 1: The CLI</h2>
+<p>During your initial foray into automating a production network, you often want to keep things as simple as possible. In fact, it is a good idea to focus as much as possible on the business goals and logic while quickly throwing together a trivial way to accept user input or provide user interaction with your tool. Consider the example of pushing a configuration to a router in the network. For the sake of this discussion, we can ignore the actual implementation details since they are not very relevant. Assuming that we have some Python code called <code>push_config.py</code> that does the job behind the scenes, your day 1 implementation might just be a simple argument parser using the built in <code>sys</code> module that accepts, at a minimum, the IP address of the device and its credentials:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">import</span> sys
+
+<span style="color:#ff79c6">def</span> <span style="color:#50fa7b">push_config</span>(router_ip, username, password, config):
+    <span style="color:#6272a4"># your logic here</span>
+    <span style="color:#ff79c6">return</span> True
+
+<span style="color:#ff79c6">if</span> __name__ <span style="color:#ff79c6">==</span> <span style="color:#f1fa8c">&#39;__main__&#39;</span>:
+    router_ip <span style="color:#ff79c6">=</span> sys<span style="color:#ff79c6">.</span>argv[<span style="color:#bd93f9">1</span>]
+    username <span style="color:#ff79c6">=</span> sys<span style="color:#ff79c6">.</span>argv[<span style="color:#bd93f9">2</span>]
+    password <span style="color:#ff79c6">=</span> sys<span style="color:#ff79c6">.</span>argv[<span style="color:#bd93f9">3</span>]
+    config_file <span style="color:#ff79c6">=</span> sys<span style="color:#ff79c6">.</span>argv[<span style="color:#bd93f9">4</span>]
+    <span style="color:#ff79c6">with</span> <span style="color:#8be9fd;font-style:italic">open</span>(<span style="color:#f1fa8c">&#39;config_file&#39;</span>) <span style="color:#ff79c6">as</span> f:
+        config <span style="color:#ff79c6">=</span> f<span style="color:#ff79c6">.</span>read()
+    <span style="color:#ff79c6">return</span> push_config(router_ip, username, password, config)
+</code></pre></div><p>The script can then be invoked using <code>python</code>:</p>
+<pre><code>python push_config.py 10.1.1.200 userfoo passfoo
+</code></pre><p>Of course the problem with this approach is that it does not scale with a growing number of devices and scripts to maintain. It is also fragile and requires a lot of custom error handling and sanity checking. This becomes a bigger problem when you try and offload the duties to other engineers to help with day to day config pushes. In the real world, frameworks like Nornir take care of the inventory management for you by providing a way to build inventories dynamically or load them via inventory files. If you are just starting out with ad hoc scripts, using some well known Python modules such as <code>argparse</code>, <code>optparse</code> or the more powerful <a href="https://click.palletsprojects.com/en/8.0.x/">Click</a> module can alleviate some of the problems with the simple <code>argv</code> based approach. These libraries make your tooling a lot more user friendly and allow the use of helpful annotations and usage instructions that enable teams to easily operate the network.</p>
+<h2 id="day-2-the-api">Day 2: The API</h2>
+<p>The CLI approach works well when you have a confined domain of engineers operating and running your tools. Lets say that over time, you expand the functionality of your Python scripts to also fetch critical pieces of information from network devices for the purposes of analysis or monitoring. You are now also required to make this information accessible to certain application owners so they can incorporate network data into their own workflows. Your tooling is now more mission critical to the growth of the organization or company infrastructure, and the simple CLI interface does not work any more - especially when application owners need a programmatic way of ingesting your data. Enter the Application Programming Interface or API. An API allows you to convert your tooling into a service or a framework via a client-server model in which the server exposes &ldquo;endpoints&rdquo; that clients can invoke remotely in order to perform specific tasks or run scripts in the backend. The data is then returned back in a structured format for easy ingestion by other clients. A perfect example of this is a RESTful API which uses HTTP requests and responses.</p>
+<p>Considering our business use case, remember that we now have multiple teams using our tooling and we would still need to allow CLI access to our deployment team in order to not break their workflows. Do we then need the additional overhead of maintaining not just the original CLI based execution logic but also a parallel REST API that allows for remote execution ? The answer is that we do not, and therein lies the idea of API driven frameworks. In a nutshell, you write all your tooling such that any and all user / client interaction happens via the API.</p>
+<p>Going with our example above, here is a short snippet of code that creates a basic HTTP server using the Flask Python framework and allows running our config push tool via the API. The CLI and REST API are disaggregated, maintained as two separate pieces of code. This allows constraining all the business logic in a central API (possibly residing on a machine in a datacenter) while distributing the CLI code to the end users to run via their personal computers. A change or a fix to one can be made without affecting the other.</p>
+<p><span style="font-family:monospace">api.py:</span></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">from</span> flask <span style="color:#ff79c6">import</span> Flask
+app <span style="color:#ff79c6">=</span> Flask(__name__)
+
+@app.route(<span style="color:#f1fa8c">&#39;/pushConfig&#39;</span>, methods<span style="color:#ff79c6">=</span>[<span style="color:#f1fa8c">&#39;POST&#39;</span>])
+<span style="color:#ff79c6">def</span> <span style="color:#50fa7b">push_config</span>():
+    body <span style="color:#ff79c6">=</span> request<span style="color:#ff79c6">.</span>json
+    ip <span style="color:#ff79c6">=</span> body[<span style="color:#f1fa8c">&#39;ip_address&#39;</span>]
+    username <span style="color:#ff79c6">=</span> body[<span style="color:#f1fa8c">&#39;username&#39;</span>]
+    password <span style="color:#ff79c6">=</span> body[<span style="color:#f1fa8c">&#39;password&#39;</span>]
+    config <span style="color:#ff79c6">=</span> body[<span style="color:#f1fa8c">&#39;config&#39;</span>]
+
+    <span style="color:#6272a4"># your logic here</span>
+    <span style="color:#ff79c6">return</span> True
+</code></pre></div><p><span style="font-family:monospace">push_config.py:</span></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">import</span> requests
+<span style="color:#ff79c6">import</span> click
+
+api_url <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#39;http://remote_host_ip:8080&#39;</span>
+
+@click.command()
+@click.option(<span style="color:#f1fa8c">&#39;--username&#39;</span>, help<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;Router username&#39;</span>)
+@click.option(<span style="color:#f1fa8c">&#39;--password&#39;</span>, help<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;Router password&#39;</span>)
+@click.argument(<span style="color:#f1fa8c">&#39;router_ip&#39;</span>)
+@click.argument(<span style="color:#f1fa8c">&#39;config_file&#39;</span>)
+<span style="color:#ff79c6">def</span> <span style="color:#50fa7b">push_config</span>(u, p, ip, config_file):
+    <span style="color:#ff79c6">with</span> <span style="color:#8be9fd;font-style:italic">open</span>(<span style="color:#f1fa8c">&#39;config_file&#39;</span>) <span style="color:#ff79c6">as</span> f:
+        config <span style="color:#ff79c6">=</span> f<span style="color:#ff79c6">.</span>read()
+    body <span style="color:#ff79c6">=</span> {
+        <span style="color:#f1fa8c">&#39;ip_address&#39;</span>: ip,
+        <span style="color:#f1fa8c">&#39;username&#39;</span>: u,
+        <span style="color:#f1fa8c">&#39;password&#39;</span>: p,
+        <span style="color:#f1fa8c">&#39;config&#39;</span>: config,
+    }
+    resp <span style="color:#ff79c6">=</span> requests<span style="color:#ff79c6">.</span>post(api_url <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#39;/pushConfig&#39;</span>, json<span style="color:#ff79c6">=</span>body)
+    resp<span style="color:#ff79c6">.</span>raise_for_status()
+
+</code></pre></div><p>As you can tell, the CLI program now interacts directly with the API over the network in order to push the config. This is known as a Remote Procedure Call or RPC , where you are calling a &ldquo;procedure&rdquo; or a function/method remotely over the network using an API that the remote server exposes. Notice how the function name is part of the URL and the function &ldquo;arguments&rdquo; are passed as the request body. There are other less widely used RPC mechanisms out there such as JSON RPC or SOAP but for the vast majority of use cases - REST is best.</p>
+<h2 id="day-3-the-ui">Day 3: The UI</h2>
+<p>Fast forward six more months, and your operations team is now involved in several different projects. Pushing out configs to devices is now seamless and efficient thanks to the framework you delivered. In fact, it has worked well enough for the operations team to delegate simple circuit turn-up tasks out to field engineers. However, the field engineers don&rsquo;t have much of a clue about what a piece of configuration does nor how its generated. All they are concerned with is pushing out a given piece of configuration to a set of devices in the quickest possible manner. Would&rsquo;t it be great if there were a web interface where an authorized person could simply upload a piece of configuration (handed to them by some other means) and press a button to push that out to the given devices ?</p>
+<p>Because we have made our framework API driven, a web UI can be easily bolted on. It becomes just another consumer of our API, similar to our already existing CLI tool. Of course, this requires a bit of HTML or Javascript knowledge but it is a worthwhile investment in my humble opinion - one whose dividends quickly pay off. API driven development has numerous advantages such as easier and faster deployments, more maintainability, increased resiliency and modularity.</p>
+<p>
+  <figure>
+    <img src="/img/api.svg" alt="API Driven Automation">
+    <center><figcaption>API interaction</figcaption></center>
+  </figure>
+
+</p>
+<h2 id="day-4-and-beyond">Day 4 and beyond</h2>
+<p>You now have a framework setup that allows for seamless runs of your workflows and helps the organization grow and scale. As a further enhancement, you could now introduce the ability to store the results of your job runs into a central database, thereby maintaining a history and allowing for analysis and reporting. Using a framework like Flask means you could use one of the several available Object-Relational Mapping (ORM) plugins such as Flask-SQLAlchemy to easily integrate a database adapter into your server. As your tooling gets more mission critical, you could consider performance upgrades by switching to more modern mechanisms such as GRPC and providing redundancy and scale by fronting your server instances with a high performance load balancer. Of course all this is easier said than done and requires proper planning, resources and expertise.</p>
+<h3 id="a-note-on-batteries-included-frameworks">A note on &ldquo;batteries included&rdquo; frameworks</h3>
+<p>Frameworks like Flask encourage a modular, distributed API driven approach that allow developing each component (server, Web interface, Database adapters etc.) independently and iteratively. They also provide more fine grained control over each component.</p>
+<p>A vastly different approach to creating REST APIs compared to the Flask example above can be found in &ldquo;batteries included&rdquo; frameworks, the most common one being Django. While Flask is a simple micro-framework that can be easily extended via plugins, Django includes just about anything you need to create a full fledged Web framework, including APIs and UIs. The rich feature set does come at the cost of increased complexity, which makes things harder to uderstand and to troubleshoot when they break. As usual when it comes to technology choices, tradeoffs need to be made !</p>
+<h2 id="user-interface-best-practices">User Interface Best Practices</h2>
+<p>Whether its the CLI or the UI, here are  some things to consider when designing your interface:</p>
+<ul>
+<li>Provide clear messaging: Your workflows can fail for various reasons. The last thing an end user wants to see when that happens is a huge 100 line traceback with the actual error buried somewhere therein. Provide clear, concise status messages when things progress and error messages when things fail.</li>
+</ul>
+<p>Bad:</p>
+<pre><code>python push_config.py --router 1.2.3.4 --username foo --password bar
+
+Pushing config to 1.2.3.4...
+Traceback (most recent call last):
+  File &quot;&lt;some_library.py&gt;&quot;, line 2, in &lt;module&gt;
+  File &quot;&lt;some_other_lib.py&gt;&quot;, line 2, in do_something_that_might_error
+  File &quot;&lt;push_config&gt;&gt;&quot;, line 2, in raise_error
+ConnectAuthError(1.2.3.4): Connection Refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File &quot;push_config.py&quot;, line 4, in &lt;module&gt;
+    raise ValueError('failed') from e
+ValueError: failed
+</code></pre><p>Good:</p>
+<pre><code>python push_config.py --router 1.2.3.4 --username foo --password bar
+
+[I] Generating Configs
+[I] Pushing Configs to 1.2.3.4
+[E] Bad Username or Password !
+</code></pre><br/>
+<ul>
+<li>Use Colors Strategically: Typically use red to highlight errors so that they stand out. Use bold bright colors for items that require special attention. For a Web UI, use typography to create hierarchy and clarity.</li>
+</ul>
+<pre><code>
+python push_config.py --router 1.2.3.4 --username foo --password bar
+
+[I] Generating Configs
+[I] Pushing Configs to 1.2.3.4
+<div style="color:#FFA500">[W] Using insecure http !</div> 
+<div style="color:#AA4A44"><strong>[E] Bad Username or Password !</strong></div>
+</code></pre>
+<br/>
+<ul>
+<li>Provide configurability: Think about the parameters or options that could potentially be variable during the execution of your program. When it doubt, make it a configurable parameter ! For a CLI program, these could be provided via the argument parser. Things like logging verbosity, connection and execution timeouts etc. should all be made configurable. When deploying an API server, these options could be provided either via the CLI or via environment variables. For items that you dont want the user to control but still need to be variable, provide sane default values.</li>
+</ul>
+<br/>
+<ul>
+<li>Keep things simple: This is the holy grail of any and all systems that should provide years of continued reliable service. Keep a well defined scope in mind and only implement the needed functionality within the tool. Feature bloat is real and can slow things down considerably over time when problems arise (and they will). The future owner of your tool or system wil thank you when ownership changes hands !</li>
+</ul>
+
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2021/12/23/gnmi_practical" data-toggle="tooltip" data-placement="top" title="So you want to GNMI ?">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "mayuresh82-gitub-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-11 col-lg-offset-1
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/bgp" title="bgp">
+                            bgp
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/controller" title="controller">
+                            controller
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/network-automation" title="network-automation">
+                            network-automation
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/sdn" title="sdn">
+                            sdn
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/sflow" title="sflow">
+                            sflow
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="NRE-Bytes" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:nre-bytes@gmail.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+
+                    
+
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/mayuresh82">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/mayuresh-gaitonde-3232001/">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://stackoverflow.com/users/11501174/mayuresh-gaitonde">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-stack-overflow fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+            
+                    
+                    
+                    
+            
+            
+            
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; NRE-Bytes 2022
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-185781460-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+</body>
+</html>

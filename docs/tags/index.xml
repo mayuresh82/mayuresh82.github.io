@@ -6,7 +6,34 @@
     <description>Recent content in Tags on NRE-Bytes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 23 Dec 2021 09:00:00 -0800</lastBuildDate><atom:link href="https://mayuresh82.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 15 Apr 2022 09:00:00 -0800</lastBuildDate><atom:link href="https://mayuresh82.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>network-automation</title>
+      <link>https://mayuresh82.github.io/tags/network-automation/</link>
+      <pubDate>Fri, 15 Apr 2022 09:00:00 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/tags/network-automation/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>react</title>
+      <link>https://mayuresh82.github.io/tags/react/</link>
+      <pubDate>Fri, 15 Apr 2022 09:00:00 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/tags/react/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ui</title>
+      <link>https://mayuresh82.github.io/tags/ui/</link>
+      <pubDate>Fri, 15 Apr 2022 09:00:00 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/tags/ui/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>gnmi</title>
       <link>https://mayuresh82.github.io/tags/gnmi/</link>
@@ -184,15 +211,6 @@
       <pubDate>Mon, 06 May 2019 15:05:46 -0800</pubDate>
       
       <guid>https://mayuresh82.github.io/tags/netdevops/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>network automation</title>
-      <link>https://mayuresh82.github.io/tags/network-automation/</link>
-      <pubDate>Mon, 06 May 2019 15:05:46 -0800</pubDate>
-      
-      <guid>https://mayuresh82.github.io/tags/network-automation/</guid>
       <description></description>
     </item>
     

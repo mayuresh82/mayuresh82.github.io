@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>network automation on NRE-Bytes</title>
+    <title>network-automation on NRE-Bytes</title>
     <link>https://mayuresh82.github.io/tags/network-automation/</link>
-    <description>Recent content in network automation on NRE-Bytes</description>
+    <description>Recent content in network-automation on NRE-Bytes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 06 May 2019 15:05:46 -0800</lastBuildDate><atom:link href="https://mayuresh82.github.io/tags/network-automation/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 15 Apr 2022 09:00:00 -0800</lastBuildDate><atom:link href="https://mayuresh82.github.io/tags/network-automation/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Building User Interfaces for Network Automation</title>
+      <link>https://mayuresh82.github.io/2022/04/15/building-uis-network-automation/</link>
+      <pubDate>Fri, 15 Apr 2022 09:00:00 -0800</pubDate>
+      
+      <guid>https://mayuresh82.github.io/2022/04/15/building-uis-network-automation/</guid>
+      <description>The importance of User Interfaces for Network Automation One of the least talked about aspects of network automation workflows is the ability to interface with the different tools and frameworks that enable these workflows. Consider a scenario where you are part of a small team of Network Engineers in a small company that has a small but growing customer base. You realize the need to automate your device and link provisioning workflows and hack up a few Python scripts (or Ansible playbooks if you prefer) that get the job done in the beginning.</description>
+    </item>
+    
     <item>
       <title>Getting started with Network Automation</title>
       <link>https://mayuresh82.github.io/2019/05/06/getting_started/</link>
